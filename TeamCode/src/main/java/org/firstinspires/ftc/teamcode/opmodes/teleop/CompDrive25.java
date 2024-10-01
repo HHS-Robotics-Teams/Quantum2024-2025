@@ -5,7 +5,6 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.components.RobotComponents;
 import org.firstinspires.ftc.teamcode.excutil.Input;
@@ -19,8 +18,8 @@ public class CompDrive25 extends OpMode {
     //TODO GET RIGHT VALUES
     public static double intakePower = .6;
     public static double climbServoPower = .4;
-    public static double wristLeftPosition = .2;
-    public static double wristRightPosition = .8;
+    public static double wristIntakePosition = .2;
+    public static double wristRetractedPosition = .8;
     public static int slideMotorPickupPower = 29;
     public static int pivotUpPosition = 200;
     public static int pivotDownPosition = -200;
@@ -66,6 +65,8 @@ public class CompDrive25 extends OpMode {
         }
 
         if(gamepad1.right_stick_button) {
+            RobotComponents.wrist_servo.setPosition(wristRetractedPosition);
+            RobotComponents.pivot_motor.setTargetPosition(pivotDownPosition);
             RobotComponents.right_slide_motor.setTargetPosition(rightSlideRetractedPosition);
             RobotComponents.left_slide_motor.setTargetPosition(leftSlideRetractedPosition);
         }
@@ -82,10 +83,10 @@ public class CompDrive25 extends OpMode {
         }
 
         if(input.left_bumper.down()) {
-            RobotComponents.wrist_servo.setPosition(wristLeftPosition);
+            RobotComponents.wrist_servo.setPosition(wristIntakePosition);
         }
         if(input.right_bumper.down()) {
-            RobotComponents.wrist_servo.setPosition(wristRightPosition);
+            RobotComponents.wrist_servo.setPosition(wristRetractedPosition);
         }
 
         if(input.x.held()) {
