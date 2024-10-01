@@ -14,21 +14,23 @@ import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.PathChain;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
 
 @Autonomous
-public class BlueBasketSideAuto extends LinearOpMode {
+public class RedObservationSideAuto extends LinearOpMode {
     private Follower follower;
 
 
     /* EVERY SINGLE LOCATION FOR AUTONOMOUS */
-    Pose startPose = new Pose(8, 88.2, Math.toRadians(180));
-    Point blueBasketStart = new Point(8, 88.2, Point.CARTESIAN);
-    Point blueBasketSpeceminDrop = new Point(34, 80.5, Point.CARTESIAN);
-    Point blueBasketDrop = new Point(20, 132, Point.CARTESIAN);
-    Point blueBasketScore = new Point(20, 129, Point.CARTESIAN);
+    Pose startPose = new Pose(136, 88.2, Math.toRadians(0));
+    Point redObservationStart = new Point(136, 88.2, Point.CARTESIAN);
+    Point redObservationSpeceminDrop = new Point(110, 80.5, Point.CARTESIAN);
+    Point redObservationDrop = new Point(112, 132, Point.CARTESIAN);
+    Point redObservationScore = new Point(123, 132, Point.CARTESIAN);
+    Point redObservationPark = new Point(126,132,Point.CARTESIAN);
     private PathChain cycleOne;
     private PathChain pickupTwo;
     private PathChain cycleTwo;
     private PathChain pickupThree;
     private PathChain cycleThree;
+    private PathChain park;
 
     //TODO GET VALUES
     public static final int ALLOWABLESLIDEERROR = 20;
@@ -115,15 +117,16 @@ public class BlueBasketSideAuto extends LinearOpMode {
 
     // PATHS
 
-    Path toDrop = (new Path(new BezierCurve(blueBasketStart, blueBasketSpeceminDrop)));
-    Path toCycle = (new Path(new BezierCurve(blueBasketSpeceminDrop, blueBasketDrop)));
+    Path toDrop = (new Path(new BezierCurve(redObservationStart, redObservationSpeceminDrop)));
+    Path toCycle = (new Path(new BezierCurve(redObservationSpeceminDrop, redObservationDrop)));
 
     public void buildPaths() {
-        cycleOne = follower.pathBuilder().addPath(new BezierCurve(blueBasketDrop, blueBasketScore)).setLinearHeadingInterpolation(Math.PI, Math.toRadians(135)).build();
-        pickupTwo = follower.pathBuilder().addPath(new BezierCurve(blueBasketScore, blueBasketDrop)).setLinearHeadingInterpolation(Math.toRadians(135), Math.toRadians(150)).build();
-        cycleTwo = follower.pathBuilder().addPath(new BezierCurve(blueBasketDrop, blueBasketScore)).setLinearHeadingInterpolation(Math.toRadians(150), Math.toRadians(135)).build();
-        pickupThree = follower.pathBuilder().addPath(new BezierCurve(blueBasketScore, blueBasketDrop)).setLinearHeadingInterpolation(Math.toRadians(135), Math.toRadians(210)).build();
-        cycleThree = follower.pathBuilder().addPath(new BezierCurve(blueBasketDrop, blueBasketScore)).setLinearHeadingInterpolation(Math.toRadians(210), Math.toRadians(135)).build();
+        cycleOne = follower.pathBuilder().addPath(new BezierCurve(redObservationDrop, redObservationScore)).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0)).build();
+        pickupTwo = follower.pathBuilder().addPath(new BezierCurve(redObservationScore, redObservationDrop)).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(-35)).build();
+        cycleTwo = follower.pathBuilder().addPath(new BezierCurve(redObservationDrop, redObservationScore)).setLinearHeadingInterpolation(Math.toRadians(-35), Math.toRadians(0)).build();
+        pickupThree = follower.pathBuilder().addPath(new BezierCurve(redObservationScore, redObservationDrop)).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(35)).build();
+        cycleThree = follower.pathBuilder().addPath(new BezierCurve(redObservationDrop, redObservationScore)).setLinearHeadingInterpolation(Math.toRadians(35),Math.toRadians(0)).build();
+        park = follower.pathBuilder().addPath(new BezierCurve(redObservationScore, redObservationPark)).setConstantHeadingInterpolation(Math.toRadians(0)).build();
     }
 
     public void intake() {

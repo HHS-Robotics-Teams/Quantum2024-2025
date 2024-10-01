@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes.auto;
 
+import static org.firstinspires.ftc.teamcode.opmodes.auto.BlueBasketSideAuto.ALLOWABLESLIDEERROR;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -14,16 +16,15 @@ import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.PathChain;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
 
 @Autonomous
-public class BlueBasketSideAuto extends LinearOpMode {
+public class RedBasketSideAuto extends LinearOpMode {
     private Follower follower;
 
-
     /* EVERY SINGLE LOCATION FOR AUTONOMOUS */
-    Pose startPose = new Pose(8, 88.2, Math.toRadians(180));
-    Point blueBasketStart = new Point(8, 88.2, Point.CARTESIAN);
-    Point blueBasketSpeceminDrop = new Point(34, 80.5, Point.CARTESIAN);
-    Point blueBasketDrop = new Point(20, 132, Point.CARTESIAN);
-    Point blueBasketScore = new Point(20, 129, Point.CARTESIAN);
+    Pose startPose = new Pose(136, 55.6, Math.toRadians(0));
+    Point redBasketStart = new Point(136, 55.6, Point.CARTESIAN);
+    Point redBasketSpeceminDrop = new Point(110, 64.5, Point.CARTESIAN);
+    Point redBasketDrop = new Point(112, 14, Point.CARTESIAN);
+    Point redBasketScore = new Point(123, 18, Point.CARTESIAN);
     private PathChain cycleOne;
     private PathChain pickupTwo;
     private PathChain cycleTwo;
@@ -31,7 +32,6 @@ public class BlueBasketSideAuto extends LinearOpMode {
     private PathChain cycleThree;
 
     //TODO GET VALUES
-    public static final int ALLOWABLESLIDEERROR = 20;
     int speceminPivotDrop = 200;
     int rightSlideSpecimin = 200;
     int leftSlideSpecemin = 200;
@@ -115,15 +115,15 @@ public class BlueBasketSideAuto extends LinearOpMode {
 
     // PATHS
 
-    Path toDrop = (new Path(new BezierCurve(blueBasketStart, blueBasketSpeceminDrop)));
-    Path toCycle = (new Path(new BezierCurve(blueBasketSpeceminDrop, blueBasketDrop)));
+    Path toDrop = (new Path(new BezierCurve(redBasketStart, redBasketSpeceminDrop)));
+    Path toCycle = (new Path(new BezierCurve(redBasketSpeceminDrop, redBasketDrop)));
 
     public void buildPaths() {
-        cycleOne = follower.pathBuilder().addPath(new BezierCurve(blueBasketDrop, blueBasketScore)).setLinearHeadingInterpolation(Math.PI, Math.toRadians(135)).build();
-        pickupTwo = follower.pathBuilder().addPath(new BezierCurve(blueBasketScore, blueBasketDrop)).setLinearHeadingInterpolation(Math.toRadians(135), Math.toRadians(150)).build();
-        cycleTwo = follower.pathBuilder().addPath(new BezierCurve(blueBasketDrop, blueBasketScore)).setLinearHeadingInterpolation(Math.toRadians(150), Math.toRadians(135)).build();
-        pickupThree = follower.pathBuilder().addPath(new BezierCurve(blueBasketScore, blueBasketDrop)).setLinearHeadingInterpolation(Math.toRadians(135), Math.toRadians(210)).build();
-        cycleThree = follower.pathBuilder().addPath(new BezierCurve(blueBasketDrop, blueBasketScore)).setLinearHeadingInterpolation(Math.toRadians(210), Math.toRadians(135)).build();
+        cycleOne = follower.pathBuilder().addPath(new BezierCurve(redBasketDrop, redBasketScore)).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(-45)).build();
+        pickupTwo = follower.pathBuilder().addPath(new BezierCurve(redBasketScore, redBasketDrop)).setLinearHeadingInterpolation(Math.toRadians(-45), Math.toRadians(-30)).build();
+        cycleTwo = follower.pathBuilder().addPath(new BezierCurve(redBasketDrop, redBasketScore)).setLinearHeadingInterpolation(Math.toRadians(-30), Math.toRadians(-45)).build();
+        pickupThree = follower.pathBuilder().addPath(new BezierCurve(redBasketScore, redBasketDrop)).setLinearHeadingInterpolation(Math.toRadians(-45), Math.toRadians(35)).build();
+        cycleThree = follower.pathBuilder().addPath(new BezierCurve(redBasketDrop, redBasketScore)).setLinearHeadingInterpolation(Math.toRadians(35), Math.toRadians(-45)).build();
     }
 
     public void intake() {

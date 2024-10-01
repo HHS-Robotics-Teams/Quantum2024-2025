@@ -21,16 +21,15 @@ public class CompDrive25 extends OpMode {
     public static double climbServoPower = .4;
     public static double wristLeftPosition = .2;
     public static double wristRightPosition = .8;
-    public static int pivotAmount = 200;
     public static int slideMotorPickupPower = 29;
-    public static int pivotUpPosition;
-    public static int pivotDownPosition;
-    public static int leftSlideHighBasketPosition;
-    public static int leftSlideLowBasketPosition;
-    public static int leftSlideRetractedPosition;
-    public static int rightSlideHighBasketPosition;
-    public static int rightSlideLowBasketPosition;
-    public static int rightSlideRetractedPosition;
+    public static int pivotUpPosition = 200;
+    public static int pivotDownPosition = -200;
+    public static int leftSlideHighBasketPosition = 400;
+    public static int leftSlideLowBasketPosition = 200;
+    public static int leftSlideRetractedPosition = 0;
+    public static int rightSlideHighBasketPosition = 400;
+    public static int rightSlideLowBasketPosition = 200;
+    public static int rightSlideRetractedPosition = 0;
     boolean isUp = false;
     @Override
     public void init() {
@@ -38,14 +37,7 @@ public class CompDrive25 extends OpMode {
         RobotComponents.init(hardwareMap);
         follower = new Follower(hardwareMap);
 
-        pivotUpPosition = RobotComponents.pivot_motor.getCurrentPosition() - pivotAmount;
-        pivotDownPosition = RobotComponents.pivot_motor.getCurrentPosition() + pivotAmount;
-        leftSlideRetractedPosition = RobotComponents.left_slide_motor.getCurrentPosition();
-        leftSlideHighBasketPosition = (leftSlideRetractedPosition + 400);
-        leftSlideLowBasketPosition = (leftSlideRetractedPosition + 200);
-        rightSlideRetractedPosition = RobotComponents.left_slide_motor.getCurrentPosition();
-        rightSlideHighBasketPosition = (leftSlideRetractedPosition + 400);
-        rightSlideLowBasketPosition = (leftSlideRetractedPosition + 200);
+        RobotComponents.pivot_motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         follower.startTeleopDrive();
     }

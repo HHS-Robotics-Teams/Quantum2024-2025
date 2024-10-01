@@ -117,10 +117,13 @@ public class RobotComponents {
 
         left_slide_motor = registerEncodedMotor(hardwareMap, "left_slide_motor", "Left Slide Motor");
         right_slide_motor = registerEncodedMotor(hardwareMap, "right_slide_motor", "Right Slide Motor");
+        left_slide_motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        right_slide_motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         left_slide_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         right_slide_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         pivot_motor = hardwareMap.get(DcMotor.class, "pivot_motor");
+        pivot_motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         pivot_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         right_climb1_servo = hardwareMap.get(CRServo.class, "right_climb1_servo");
