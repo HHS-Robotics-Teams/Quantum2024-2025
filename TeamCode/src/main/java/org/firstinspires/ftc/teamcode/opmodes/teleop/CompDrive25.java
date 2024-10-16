@@ -20,9 +20,11 @@ public class CompDrive25 extends OpMode {
     public static double climbServoPower = .4;
     public static double wristIntakePosition = .2;
     public static double wristRetractedPosition = .8;
-    public static int slideMotorPickupPower = 29;
-    public static int pivotUpPosition = 200;
-    public static int pivotDownPosition = -200;
+    public static double slideMotorPickupPower = .6;
+    public static double pivotPower = .6;
+    public static int pivotUpPosition = 1076;
+    public static int pivotLowPosition = 1249;
+    public static int pivotDownPosition = 20;
     public static int leftSlideHighBasketPosition = 400;
     public static int leftSlideLowBasketPosition = 200;
     public static int leftSlideRetractedPosition = 0;
@@ -70,6 +72,9 @@ public class CompDrive25 extends OpMode {
             RobotComponents.right_slide_motor.setTargetPosition(rightSlideRetractedPosition);
             RobotComponents.left_slide_motor.setTargetPosition(leftSlideRetractedPosition);
         }
+        if(((RobotComponents.pivot_motor.getCurrentPosition() - RobotComponents.pivot_motor.getTargetPosition()) > 10) && !input.x.held()) {
+            RobotComponents.pivot_motor.setPower(pivotPower);
+        }
         //END OF ARM CODE
 
         //IntakeOuttake CODE
@@ -90,6 +95,7 @@ public class CompDrive25 extends OpMode {
         }
 
         if(input.x.held()) {
+            RobotComponents.pivot_motor.setTargetPosition(pivotDownPosition);
             RobotComponents.right_slide_motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             RobotComponents.left_slide_motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             RobotComponents.right_slide_motor.setPower(slideMotorPickupPower);
@@ -108,11 +114,11 @@ public class CompDrive25 extends OpMode {
         }
         //END OF CLIMB CODE
 
-        //DRIVETRAIN CODE for PedroPathing Mecanum drive
+        //DRIVETRAIN CODE for PedroPathing
         follower.setTeleOpMovementVectors(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x);
         follower.update();
         //END OF DRIVETRAIN CODE
-
+        input.pollGamepad(gamepad1);
 
         //TELEMETRY CODE
         telemetry.addLine("---------------EXTENDO POSITIONS---------------");

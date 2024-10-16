@@ -4,6 +4,8 @@ package org.firstinspires.ftc.teamcode.opmodes.debug;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.components.RobotComponents;
 import org.firstinspires.ftc.teamcode.excutil.Input;
@@ -31,36 +33,49 @@ public class RobotTester extends OpMode {
 
     @Override
     public void loop() {
+        RobotComponents.pivot_motor.setPower(0);
+        RobotComponents.left_slide_motor.setPower(0);
+        RobotComponents.right_slide_motor.setPower(0);
 
         //ARM CODE
-        if(input.dpad_up.down()){
-            RobotComponents.pivot_motor.setTargetPosition(RobotComponents.pivot_motor.getCurrentPosition()+5);
+        if(input.dpad_up.held()){
+            RobotComponents.pivot_motor.setTargetPosition(RobotComponents.pivot_motor.getCurrentPosition()+15);
+            RobotComponents.pivot_motor.setPower(1);
         }
-        if(input.dpad_down.down()){
-            RobotComponents.pivot_motor.setTargetPosition(RobotComponents.pivot_motor.getCurrentPosition()-5);
+        if(input.dpad_down.held()){
+            RobotComponents.pivot_motor.setTargetPosition(RobotComponents.pivot_motor.getCurrentPosition()-15);
+            RobotComponents.pivot_motor.setPower(1);
         }
 
-        if(input.y.down()) {
-            RobotComponents.right_slide_motor.setTargetPosition(RobotComponents.right_slide_motor.getCurrentPosition()+5);
-            RobotComponents.left_slide_motor.setTargetPosition(RobotComponents.left_slide_motor.getCurrentPosition()+5);
+        if(input.y.held()) {
+            RobotComponents.right_slide_motor.setTargetPosition(RobotComponents.right_slide_motor.getCurrentPosition()+15);
+            RobotComponents.left_slide_motor.setTargetPosition(RobotComponents.left_slide_motor.getCurrentPosition()+15);
+            RobotComponents.right_slide_motor.setPower(CompDrive25.slideMotorPickupPower);
+            RobotComponents.left_slide_motor.setPower(CompDrive25.slideMotorPickupPower);
         }
-        if(input.a.down()) {
-            RobotComponents.right_slide_motor.setTargetPosition(RobotComponents.right_slide_motor.getCurrentPosition()-5);
-            RobotComponents.left_slide_motor.setTargetPosition(RobotComponents.left_slide_motor.getCurrentPosition()-5);
+        if(input.a.held()) {
+            RobotComponents.right_slide_motor.setTargetPosition(RobotComponents.right_slide_motor.getCurrentPosition()-15);
+            RobotComponents.left_slide_motor.setTargetPosition(RobotComponents.left_slide_motor.getCurrentPosition()-15);
+            RobotComponents.right_slide_motor.setPower(CompDrive25.slideMotorPickupPower);
+            RobotComponents.left_slide_motor.setPower(CompDrive25.slideMotorPickupPower);
         }
 
         if(gamepad1.right_stick_button) {
-            RobotComponents.right_slide_motor.setTargetPosition(RobotComponents.right_slide_motor.getCurrentPosition());
-            RobotComponents.left_slide_motor.setTargetPosition(RobotComponents.right_slide_motor.getCurrentPosition());
+            RobotComponents.right_slide_motor.setTargetPosition(0);
+            RobotComponents.left_slide_motor.setTargetPosition(0);
+            RobotComponents.right_slide_motor.setPower(CompDrive25.slideMotorPickupPower);
+            RobotComponents.left_slide_motor.setPower(CompDrive25.slideMotorPickupPower);
         }
         //END OF ARM CODE
 
         //IntakeOuttake CODE
-        if(input.right_trigger.down()) {
+        if(input.right_trigger.held()) {
+            RobotComponents.intakeouttake_servo.setDirection(DcMotorSimple.Direction.FORWARD);
             RobotComponents.intakeouttake_servo.setPower(CompDrive25.intakePower);
         }
-        if(input.left_trigger.down()) {
-            RobotComponents.intakeouttake_servo.setPower(-CompDrive25.intakePower);
+        if(input.left_trigger.held()) {
+            RobotComponents.intakeouttake_servo.setDirection(DcMotorSimple.Direction.REVERSE);
+            RobotComponents.intakeouttake_servo.setPower(CompDrive25.intakePower);
         }
 
         if(input.left_bumper.down()) {
@@ -93,6 +108,7 @@ public class RobotTester extends OpMode {
         follower.setTeleOpMovementVectors(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x);
         follower.update();
         //END OF DRIVETRAIN CODE
+        input.pollGamepad(gamepad1);
 
 
         //TELEMETRY CODE

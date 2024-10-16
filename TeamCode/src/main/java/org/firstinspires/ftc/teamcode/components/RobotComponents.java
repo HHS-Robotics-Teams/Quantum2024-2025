@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -119,12 +120,16 @@ public class RobotComponents {
         right_slide_motor = registerEncodedMotor(hardwareMap, "right_slide_motor", "Right Slide Motor");
         left_slide_motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         right_slide_motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        left_slide_motor.setTargetPosition(0);
+        right_slide_motor.setTargetPosition(0);
         left_slide_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         right_slide_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         pivot_motor = hardwareMap.get(DcMotor.class, "pivot_motor");
         pivot_motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        pivot_motor.setTargetPosition(0);
         pivot_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        pivot_motor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         right_climb1_servo = hardwareMap.get(CRServo.class, "right_climb1_servo");
         left_climb1_servo = hardwareMap.get(CRServo.class, "left_climb1_servo");
