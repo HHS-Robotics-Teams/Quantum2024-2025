@@ -1,13 +1,19 @@
 package org.firstinspires.ftc.teamcode.opmodes.auto;
 
 import static org.firstinspires.ftc.teamcode.opmodes.auto.BlueBasketSideAuto.ALLOWABLESLIDEERROR;
+import static org.firstinspires.ftc.teamcode.opmodes.Constants.intakePower;
+import static org.firstinspires.ftc.teamcode.opmodes.Constants.pivotDownPosition;
+import static org.firstinspires.ftc.teamcode.opmodes.Constants.pivotUpHighTarget;
+import static org.firstinspires.ftc.teamcode.opmodes.Constants.slideHighBasketPosition;
+import static org.firstinspires.ftc.teamcode.opmodes.Constants.slideRetractedPosition;
+import static org.firstinspires.ftc.teamcode.opmodes.Constants.wristIntakePosition;
+import static org.firstinspires.ftc.teamcode.opmodes.Constants.wristRetractedPosition;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 
 import org.firstinspires.ftc.teamcode.components.RobotComponents;
-import org.firstinspires.ftc.teamcode.opmodes.teleop.CompDrive25;
 import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
 import org.firstinspires.ftc.teamcode.pedroPathing.localization.Pose;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierCurve;
@@ -46,13 +52,13 @@ public class RedBasketSideAuto extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        //INIT
+        /*/INIT
         RobotComponents.init(hardwareMap);
         follower = new Follower(hardwareMap);
 
         //Initial Positions
-        RobotComponents.left_slide_motor.setTargetPosition(CompDrive25.leftSlideRetractedPosition);
-        RobotComponents.right_slide_motor.setTargetPosition(CompDrive25.rightSlideRetractedPosition);
+        RobotComponents.left_slide_motor.setTargetPosition(CompDrive25.slideRetractedPosition);
+        RobotComponents.right_slide_motor.setTargetPosition(CompDrive25.slideRetractedPosition);
         RobotComponents.pivot_motor.setTargetPosition(CompDrive25.pivotDownPosition);
         RobotComponents.wrist_servo.setPosition(CompDrive25.wristRetractedPosition);
 
@@ -60,10 +66,10 @@ public class RedBasketSideAuto extends LinearOpMode {
         buildPaths();
         //END OF INIT
 
-        //To hanging drop
+        //To hanging drop*/
         follower.followPath(toDrop, true);
 
-        //Extend
+        /*/Extend
         RobotComponents.pivot_motor.setTargetPosition(speceminPivotDrop);
         RobotComponents.right_slide_motor.setTargetPosition(rightSlideSpecimin);
         RobotComponents.left_slide_motor.setTargetPosition(leftSlideSpecemin);
@@ -77,21 +83,21 @@ public class RedBasketSideAuto extends LinearOpMode {
 
         //Retract
         RobotComponents.wrist_servo.setPosition(CompDrive25.wristRetractedPosition);
-        RobotComponents.left_slide_motor.setTargetPosition(CompDrive25.leftSlideRetractedPosition);
-        RobotComponents.right_slide_motor.setTargetPosition(CompDrive25.rightSlideRetractedPosition);
+        RobotComponents.left_slide_motor.setTargetPosition(CompDrive25.slideRetractedPosition);
+        RobotComponents.right_slide_motor.setTargetPosition(CompDrive25.slideRetractedPosition);
         RobotComponents.pivot_motor.setTargetPosition(CompDrive25.pivotDownPosition);
-
+*/
         //To spikemark cycle
         follower.followPath(toCycle, true);
 
-        //1st Pickup
+        /*/1st Pickup
         RobotComponents.left_slide_motor.setTargetPosition(leftSlideMiddleSpikemark);
         RobotComponents.right_slide_motor.setTargetPosition(rightSlideMiddleSpikemark);
         intake();
-
+*/
         //1st Drop
         follower.followPath(cycleOne);
-        outtake();
+/*        outtake();
 
         //2nd Pickup
         follower.followPath(pickupTwo);
@@ -114,7 +120,7 @@ public class RedBasketSideAuto extends LinearOpMode {
 
         //Park?
         //TODO follower.followPath(park);
-
+*/
     }
 
     // PATHS
@@ -131,33 +137,33 @@ public class RedBasketSideAuto extends LinearOpMode {
     }
 
     public void intake() {
-        RobotComponents.wrist_servo.setPosition(CompDrive25.wristIntakePosition);
+        RobotComponents.wrist_servo.setPosition(wristIntakePosition);
         while (!((RobotComponents.left_slide_motor.getCurrentPosition() - RobotComponents.left_slide_motor.getTargetPosition()) < ALLOWABLESLIDEERROR)) {
             try {wait(1); } catch (InterruptedException e) { throw new RuntimeException(e);}}
-        RobotComponents.intakeouttake_servo.setPower(CompDrive25.intakePower);
+        RobotComponents.intakeouttake_servo.setPower(intakePower);
         try {wait(1); } catch (InterruptedException e) { throw new RuntimeException(e);}
         RobotComponents.intakeouttake_servo.setPower(0);
-        RobotComponents.wrist_servo.setPosition(CompDrive25.wristRetractedPosition);
-        RobotComponents.right_slide_motor.setTargetPosition(CompDrive25.rightSlideRetractedPosition);
-        RobotComponents.left_slide_motor.setTargetPosition(CompDrive25.leftSlideRetractedPosition);
-        RobotComponents.pivot_motor.setTargetPosition(CompDrive25.pivotDownPosition);
+        RobotComponents.wrist_servo.setPosition(wristRetractedPosition);
+        RobotComponents.right_slide_motor.setTargetPosition(slideRetractedPosition);
+        RobotComponents.left_slide_motor.setTargetPosition(slideRetractedPosition);
+        RobotComponents.pivot_motor.setTargetPosition(pivotDownPosition);
     }
 
     public void outtake() {
-        RobotComponents.pivot_motor.setTargetPosition(CompDrive25.pivotUpPosition);
-        RobotComponents.left_slide_motor.setTargetPosition(CompDrive25.leftSlideHighBasketPosition);
-        RobotComponents.right_slide_motor.setTargetPosition(CompDrive25.rightSlideHighBasketPosition);
-        RobotComponents.wrist_servo.setPosition(CompDrive25.wristIntakePosition);
+        RobotComponents.pivot_motor.setTargetPosition(pivotUpHighTarget);
+        RobotComponents.left_slide_motor.setTargetPosition(slideHighBasketPosition);
+        RobotComponents.right_slide_motor.setTargetPosition(slideHighBasketPosition);
+        RobotComponents.wrist_servo.setPosition(wristIntakePosition);
         try { wait(1); } catch (InterruptedException e) { throw new RuntimeException(e);}
         RobotComponents.intakeouttake_servo.setDirection(CRServo.Direction.REVERSE);
-        RobotComponents.intakeouttake_servo.setPower(CompDrive25.intakePower);
+        RobotComponents.intakeouttake_servo.setPower(intakePower);
         try { wait(1); } catch (InterruptedException e) { throw new RuntimeException(e);}
         RobotComponents.intakeouttake_servo.setPower(0);
         RobotComponents.intakeouttake_servo.setDirection(CRServo.Direction.FORWARD);
-        RobotComponents.wrist_servo.setPosition(CompDrive25.wristRetractedPosition);
-        RobotComponents.right_slide_motor.setTargetPosition(CompDrive25.rightSlideRetractedPosition);
-        RobotComponents.left_slide_motor.setTargetPosition(CompDrive25.leftSlideRetractedPosition);
-        RobotComponents.pivot_motor.setTargetPosition(CompDrive25.pivotDownPosition);
+        RobotComponents.wrist_servo.setPosition(wristRetractedPosition);
+        RobotComponents.right_slide_motor.setTargetPosition(slideRetractedPosition);
+        RobotComponents.left_slide_motor.setTargetPosition(slideRetractedPosition);
+        RobotComponents.pivot_motor.setTargetPosition(pivotDownPosition);
     }
 
 }

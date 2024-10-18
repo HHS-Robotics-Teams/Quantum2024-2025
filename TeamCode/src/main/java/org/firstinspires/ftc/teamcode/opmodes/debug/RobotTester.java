@@ -1,6 +1,9 @@
 package org.firstinspires.ftc.teamcode.opmodes.debug;
 
 
+import static org.firstinspires.ftc.teamcode.opmodes.Constants.climbServoPower;
+import static org.firstinspires.ftc.teamcode.opmodes.Constants.intakePower;
+
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -9,11 +12,16 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.components.RobotComponents;
 import org.firstinspires.ftc.teamcode.excutil.Input;
+import org.firstinspires.ftc.teamcode.excutil.coroutines.CoroutineManager;
 import org.firstinspires.ftc.teamcode.opmodes.teleop.CompDrive25;
 import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
 
 @TeleOp
 public class RobotTester extends OpMode {
+
+    double pivotPower;
+    double slidePower;
+
 
     private Input input ;
     private Follower follower;
@@ -33,49 +41,52 @@ public class RobotTester extends OpMode {
 
     @Override
     public void loop() {
-        RobotComponents.pivot_motor.setPower(0);
-        RobotComponents.left_slide_motor.setPower(0);
-        RobotComponents.right_slide_motor.setPower(0);
+        input.pollGamepad(gamepad1);
+        pivotPower = 0.4;
+        slidePower = 0;
 
         //ARM CODE
         if(input.dpad_up.held()){
             RobotComponents.pivot_motor.setTargetPosition(RobotComponents.pivot_motor.getCurrentPosition()+15);
-            RobotComponents.pivot_motor.setPower(1);
+            pivotPower = .8;
         }
         if(input.dpad_down.held()){
             RobotComponents.pivot_motor.setTargetPosition(RobotComponents.pivot_motor.getCurrentPosition()-15);
-            RobotComponents.pivot_motor.setPower(1);
+            pivotPower = .8;
+        }
+        if(Math.abs(RobotComponents.pivot_motor.getCurrentPosition()-RobotComponents.pivot_motor.getTargetPosition())>25) {
+            pivotPower = .75;
         }
 
         if(input.y.held()) {
             RobotComponents.right_slide_motor.setTargetPosition(RobotComponents.right_slide_motor.getCurrentPosition()+15);
             RobotComponents.left_slide_motor.setTargetPosition(RobotComponents.left_slide_motor.getCurrentPosition()+15);
-            RobotComponents.right_slide_motor.setPower(CompDrive25.slideMotorPickupPower);
-            RobotComponents.left_slide_motor.setPower(CompDrive25.slideMotorPickupPower);
+            slidePower = .6;
         }
         if(input.a.held()) {
             RobotComponents.right_slide_motor.setTargetPosition(RobotComponents.right_slide_motor.getCurrentPosition()-15);
             RobotComponents.left_slide_motor.setTargetPosition(RobotComponents.left_slide_motor.getCurrentPosition()-15);
-            RobotComponents.right_slide_motor.setPower(CompDrive25.slideMotorPickupPower);
-            RobotComponents.left_slide_motor.setPower(CompDrive25.slideMotorPickupPower);
+            slidePower = .6;
         }
 
         if(gamepad1.right_stick_button) {
             RobotComponents.right_slide_motor.setTargetPosition(0);
             RobotComponents.left_slide_motor.setTargetPosition(0);
-            RobotComponents.right_slide_motor.setPower(CompDrive25.slideMotorPickupPower);
-            RobotComponents.left_slide_motor.setPower(CompDrive25.slideMotorPickupPower);
+            slidePower = .6;
+
         }
         //END OF ARM CODE
 
         //IntakeOuttake CODE
         if(input.right_trigger.held()) {
             RobotComponents.intakeouttake_servo.setDirection(DcMotorSimple.Direction.FORWARD);
-            RobotComponents.intakeouttake_servo.setPower(CompDrive25.intakePower);
+            RobotComponents.intakeouttake_servo.setPower(intakePower);
         }
-        if(input.left_trigger.held()) {
+         else if(input.left_trigger.held()) {
             RobotComponents.intakeouttake_servo.setDirection(DcMotorSimple.Direction.REVERSE);
-            RobotComponents.intakeouttake_servo.setPower(CompDrive25.intakePower);
+            RobotComponents.intakeouttake_servo.setPower(intakePower);
+        } else {
+            RobotComponents.intakeouttake_servo.setPower(0);
         }
 
         if(input.left_bumper.down()) {
@@ -84,23 +95,23 @@ public class RobotTester extends OpMode {
         if(input.right_bumper.down()) {
             RobotComponents.wrist_servo.setPosition(RobotComponents.wrist_servo.getPosition()-.05);
         }
-
-        if(input.x.held()) {
-            RobotComponents.right_slide_motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            RobotComponents.left_slide_motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            RobotComponents.right_slide_motor.setPower(CompDrive25.slideMotorPickupPower);
-            RobotComponents.left_slide_motor.setPower(CompDrive25.slideMotorPickupPower);
-        }
-        if(!(input.x.held())) {
-            RobotComponents.right_slide_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            RobotComponents.left_slide_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        }
         //END OF i already hate this naming convention
 
         //CLIMB CODE
         if(input.b.held()) {
-            RobotComponents.left_climb1_servo.setPower(CompDrive25.climbServoPower);
-            RobotComponents.right_climb1_servo.setPower(CompDrive25.climbServoPower);
+            RobotComponents.right_climb1_servo.setDirection(DcMotorSimple.Direction.FORWARD);
+            RobotComponents.left_climb1_servo.setDirection(DcMotorSimple.Direction.FORWARD);
+            RobotComponents.left_climb1_servo.setPower(climbServoPower);
+            RobotComponents.right_climb1_servo.setPower(climbServoPower);
+        }
+        else if(input.x.held()) {
+            RobotComponents.left_climb1_servo.setDirection(DcMotorSimple.Direction.REVERSE);
+            RobotComponents.right_climb1_servo.setDirection(DcMotorSimple.Direction.REVERSE);
+            RobotComponents.left_climb1_servo.setPower(climbServoPower);
+            RobotComponents.right_climb1_servo.setPower(climbServoPower);
+        } else {
+            RobotComponents.left_climb1_servo.setPower(0);
+            RobotComponents.right_climb1_servo.setPower(0);
         }
         //END OF CLIMB CODE
 
@@ -108,7 +119,9 @@ public class RobotTester extends OpMode {
         follower.setTeleOpMovementVectors(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x);
         follower.update();
         //END OF DRIVETRAIN CODE
-        input.pollGamepad(gamepad1);
+        RobotComponents.pivot_motor.setPower(pivotPower);
+        RobotComponents.left_slide_motor.setPower(slidePower);
+        RobotComponents.right_slide_motor.setPower(slidePower);
 
 
         //TELEMETRY CODE

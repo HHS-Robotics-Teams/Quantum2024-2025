@@ -42,8 +42,6 @@ public class RobotComponents {
         }
     }
 
-
-    //TODO CHECK FOR FIX WORKING
     public static IMU.Parameters imuParams = new IMU.Parameters(
             new RevHubOrientationOnRobot(
                     RevHubOrientationOnRobot.LogoFacingDirection.DOWN,
@@ -124,6 +122,8 @@ public class RobotComponents {
         right_slide_motor.setTargetPosition(0);
         left_slide_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         right_slide_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        left_slide_motor.setDirection(DcMotorSimple.Direction.REVERSE);
+        right_slide_motor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         pivot_motor = hardwareMap.get(DcMotor.class, "pivot_motor");
         pivot_motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
