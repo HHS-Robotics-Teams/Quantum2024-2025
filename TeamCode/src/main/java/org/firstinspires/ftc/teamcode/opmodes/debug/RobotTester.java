@@ -21,8 +21,8 @@ public class RobotTester extends OpMode {
 
     double pivotPower;
     double slidePower;
-
-
+    double servoMove = .2;
+    int movementAmount = 20;
     private Input input ;
     private Follower follower;
     boolean isUp = false;
@@ -44,14 +44,22 @@ public class RobotTester extends OpMode {
         input.pollGamepad(gamepad1);
         pivotPower = 0.4;
         slidePower = 0;
+        if(input.start.down()){
+            movementAmount++;
+            servoMove = servoMove + .05;
+        }
+        if(input.back.down()){
+            movementAmount--;
+            servoMove = servoMove - .05;
+        }
 
         //ARM CODE
         if(input.dpad_up.held()){
-            RobotComponents.pivot_motor.setTargetPosition(RobotComponents.pivot_motor.getCurrentPosition()+15);
+            RobotComponents.pivot_motor.setTargetPosition(RobotComponents.pivot_motor.getCurrentPosition()+movementAmount);
             pivotPower = .8;
         }
         if(input.dpad_down.held()){
-            RobotComponents.pivot_motor.setTargetPosition(RobotComponents.pivot_motor.getCurrentPosition()-15);
+            RobotComponents.pivot_motor.setTargetPosition(RobotComponents.pivot_motor.getCurrentPosition()-movementAmount);
             pivotPower = .8;
         }
         if(Math.abs(RobotComponents.pivot_motor.getCurrentPosition()-RobotComponents.pivot_motor.getTargetPosition())>25) {
@@ -59,13 +67,13 @@ public class RobotTester extends OpMode {
         }
 
         if(input.y.held()) {
-            RobotComponents.right_slide_motor.setTargetPosition(RobotComponents.right_slide_motor.getCurrentPosition()+15);
-            RobotComponents.left_slide_motor.setTargetPosition(RobotComponents.left_slide_motor.getCurrentPosition()+15);
+            RobotComponents.right_slide_motor.setTargetPosition(RobotComponents.right_slide_motor.getCurrentPosition()+movementAmount);
+            RobotComponents.left_slide_motor.setTargetPosition(RobotComponents.left_slide_motor.getCurrentPosition()+movementAmount);
             slidePower = .6;
         }
         if(input.a.held()) {
-            RobotComponents.right_slide_motor.setTargetPosition(RobotComponents.right_slide_motor.getCurrentPosition()-15);
-            RobotComponents.left_slide_motor.setTargetPosition(RobotComponents.left_slide_motor.getCurrentPosition()-15);
+            RobotComponents.right_slide_motor.setTargetPosition(RobotComponents.right_slide_motor.getCurrentPosition()-movementAmount);
+            RobotComponents.left_slide_motor.setTargetPosition(RobotComponents.left_slide_motor.getCurrentPosition()-movementAmount);
             slidePower = .6;
         }
 
@@ -90,10 +98,10 @@ public class RobotTester extends OpMode {
         }
 
         if(input.left_bumper.down()) {
-            RobotComponents.wrist_servo.setPosition(RobotComponents.wrist_servo.getPosition()+.05);
+            RobotComponents.wrist_servo.setPosition(RobotComponents.wrist_servo.getPosition()+servoMove);
         }
         if(input.right_bumper.down()) {
-            RobotComponents.wrist_servo.setPosition(RobotComponents.wrist_servo.getPosition()-.05);
+            RobotComponents.wrist_servo.setPosition(RobotComponents.wrist_servo.getPosition()-servoMove);
         }
         //END OF i already hate this naming convention
 
@@ -133,13 +141,17 @@ public class RobotTester extends OpMode {
         telemetry.addData("Pivot motor current position", RobotComponents.pivot_motor.getCurrentPosition());
 
 
-        telemetry.addLine("----------------CONDITIONALS BELOW THIS LINE---------------");
+        telemetry.addLine("----------------CONDITIONALS---------------");
         if(RobotComponents.right_slide_motor.getMode()== DcMotor.RunMode.RUN_TO_POSITION) {
             telemetry.addLine("EXTENDO IN PICKUP MODE");
         }
         if(isUp) {
             telemetry.addLine("ARM IS UP");
         }
+
+        telemetry.addLine("-------------DEBUG INFO---------------");
+        telemetry.addData("Movement ticks:", movementAmount);
+        telemetry.addData("Servo Movement:", servoMove);
         //END OF TELEMETRY
     }
 

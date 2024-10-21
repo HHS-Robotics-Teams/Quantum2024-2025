@@ -157,6 +157,10 @@ public class RobotComponents {
     }
 
 
+    public static int pivotPerExtend(int extendedTicks){
+        return(extendedTicks);
+    }
+
     public static double deadZone(float val) {
         return Math.pow(RMath.clamp(val, -1.0, 1.0), 3);
         //return val;
