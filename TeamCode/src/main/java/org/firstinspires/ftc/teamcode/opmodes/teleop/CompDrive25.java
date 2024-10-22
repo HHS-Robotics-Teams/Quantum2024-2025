@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.opmodes.teleop;
 
-
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.PIVOTPOWERDOWN;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.PIVOTTICKSPEREXTENDOTICK;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.climbServoPower;
@@ -40,14 +39,18 @@ import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
 public class CompDrive25 extends OpMode {
     private Input input ;
     private Follower follower;
+    //Set true on arm input, set false upon completion of steps
     public boolean armMoving = false;
-    public boolean stopRequested = false;
+    //Set true upon step completion, Set false upon down completion
     public boolean armUp = false;
+    //Set true when extending for pickup, set false otherwise
     public boolean extendingPickupMode = false;
     //True if scoring basket, false otherwise
     public boolean basket = true;
     public String armDirection;
     public int currentArmStep;
+    public int slideMovement = 0;
+    public int previousSlideSpot = 0;
     public double pivotExtendTarget = pivotDownPosition;
 
     MotorPath pivotMiddle;
@@ -69,19 +72,19 @@ public class CompDrive25 extends OpMode {
     public void loop() {
 
         //ARM CODE
-        if(input.dpad_up.down()&&!armMoving){
+        if(input.dpad_up.down()&&!armMoving&&!extendingPickupMode){
             armMoving = true;
             armDirection = "High Pole";
             currentArmStep = 0;
         }
 
-        if(input.dpad_down.down()&&!armMoving){
+        if(input.dpad_down.down()&&!armMoving&&!extendingPickupMode){
             armMoving = true;
             armDirection = "Low Pole";
             currentArmStep = 0;
         }
 
-        if(gamepad1.right_stick_button&&!armMoving&&!extendingPickupMode) {
+        if((gamepad1.right_stick_button||gamepad1.left_stick_button)&&!armMoving&&!extendingPickupMode) {
             armMoving = true;
             armDirection = "Retract";
             currentArmStep = 0;
@@ -122,7 +125,6 @@ public class CompDrive25 extends OpMode {
                             RobotComponents.wrist_servo.setPosition(wristIntakePosition);
                             currentArmStep = 0;
                             armMoving = false;
-                            stopRequested = false;
                             armUp = true;
                             break;
                     }
@@ -152,7 +154,6 @@ public class CompDrive25 extends OpMode {
                             RobotComponents.wrist_servo.setPosition(wristIntakePosition);
                             currentArmStep = 0;
                             armMoving = false;
-                            stopRequested = false;
                             armUp = true;
                             break;
                     }
@@ -165,38 +166,35 @@ public class CompDrive25 extends OpMode {
                     switch (currentArmStep){
                         case(0):
                             RobotComponents.intakeouttake_servo.setPower(0);
+                            RobotComponents.wrist_servo.setPosition(wristIntakePosition);
                             currentArmStep = 1;
                             break;
 
                         case(1):
-                            RobotComponents.wrist_servo.setPosition(wristRetractedPosition);
-                            currentArmStep = 2;
+                            extendLeftHigh = MotorPath.runToPosition(RobotComponents.left_slide_motor, slideRetractedPosition, extendPower);
+                            extendRightHigh = MotorPath.runToPosition(RobotComponents.right_slide_motor, slideRetractedPosition, extendPower);
+                            if(extendLeftHigh.isComplete(50, 2000)&&extendRightHigh.isComplete(50,2000)){currentArmStep = 2;}
                             break;
 
                         case(2):
-                            extendLeftHigh = MotorPath.runToPosition(RobotComponents.left_slide_motor, slideRetractedPosition, extendPower);
-                            extendRightHigh = MotorPath.runToPosition(RobotComponents.right_slide_motor, slideRetractedPosition, extendPower);
-                            if(extendLeftHigh.isComplete(50, 2000)&&extendRightHigh.isComplete(50,2000)){currentArmStep = 3;}
+                            pivotMiddle = MotorPath.runToPosition(RobotComponents.pivot_motor, pivotMiddleTarget, pivotPower);
+                            if(pivotMiddle.isComplete(50, 2000)){currentArmStep = 3;}
                             break;
 
                         case(3):
-                            pivotMiddle = MotorPath.runToPosition(RobotComponents.pivot_motor, pivotMiddleTarget, pivotPower);
-                            if(pivotMiddle.isComplete(50, 2000)){currentArmStep = 4;}
-                            break;
-
-                        case(4):
                             pivotDown = MotorPath.runToPosition(RobotComponents.pivot_motor, pivotDownPosition, PIVOTPOWERDOWN);
                             currentArmStep = 0;
                             armMoving = false;
                             armUp = false;
                             break;
+
                     }
                     break;
             }
             }
             if(!basket){
                 switch(armDirection) {
-                    case "High Bar":
+                    case "High Pole":
 
                         telemetry.addLine("Going High Bar");
 
@@ -221,13 +219,12 @@ public class CompDrive25 extends OpMode {
                                 RobotComponents.wrist_servo.setPosition(wristBarPosition);
                                 currentArmStep = 0;
                                 armMoving = false;
-                                stopRequested = false;
                                 armUp = true;
                                 break;
                         }
                         break;
 
-                    case "Low Bar":
+                    case "Low Pole":
                         telemetry.addLine("Going Low Bar");
 
                         switch (currentArmStep){
@@ -251,7 +248,6 @@ public class CompDrive25 extends OpMode {
                                 RobotComponents.wrist_servo.setPosition(wristBarPosition);
                                 currentArmStep = 0;
                                 armMoving = false;
-                                stopRequested = false;
                                 armUp = true;
                                 break;
                         }
@@ -264,31 +260,28 @@ public class CompDrive25 extends OpMode {
                         switch (currentArmStep){
                             case(0):
                                 RobotComponents.intakeouttake_servo.setPower(0);
+                                RobotComponents.wrist_servo.setPosition(wristIntakePosition);
                                 currentArmStep = 1;
                                 break;
 
                             case(1):
-                                RobotComponents.wrist_servo.setPosition(wristRetractedPosition);
-                                currentArmStep = 2;
+                                extendLeftHigh = MotorPath.runToPosition(RobotComponents.left_slide_motor, slideRetractedPosition, extendPower);
+                                extendRightHigh = MotorPath.runToPosition(RobotComponents.right_slide_motor, slideRetractedPosition, extendPower);
+                                if(extendLeftHigh.isComplete(50, 2000)&&extendRightHigh.isComplete(50,2000)){currentArmStep = 2;}
                                 break;
 
                             case(2):
-                                extendLeftHigh = MotorPath.runToPosition(RobotComponents.left_slide_motor, slideRetractedPosition, extendPower);
-                                extendRightHigh = MotorPath.runToPosition(RobotComponents.right_slide_motor, slideRetractedPosition, extendPower);
-                                if(extendLeftHigh.isComplete(50, 2000)&&extendRightHigh.isComplete(50,2000)){currentArmStep = 3;}
+                                pivotMiddle = MotorPath.runToPosition(RobotComponents.pivot_motor, pivotMiddleTarget, pivotPower);
+                                if(pivotMiddle.isComplete(50, 2000)){currentArmStep = 3;}
                                 break;
 
                             case(3):
-                                pivotMiddle = MotorPath.runToPosition(RobotComponents.pivot_motor, pivotMiddleTarget, pivotPower);
-                                if(pivotMiddle.isComplete(50, 2000)){currentArmStep = 4;}
-                                break;
-
-                            case(4):
                                 pivotDown = MotorPath.runToPosition(RobotComponents.pivot_motor, pivotDownPosition, PIVOTPOWERDOWN);
                                 currentArmStep = 0;
                                 armMoving = false;
                                 armUp = false;
                                 break;
+
                         }
                         break;
                 }
@@ -297,18 +290,20 @@ public class CompDrive25 extends OpMode {
         //END OF ARM CODE
 
         //IntakeOuttake CODE
-        if(input.right_trigger.down()){
+        if(input.right_trigger.held()){
             RobotComponents.intakeouttake_servo.setDirection(CRServo.Direction.FORWARD);
             RobotComponents.intakeouttake_servo.setPower(intakePower);
         }
-        else if(input.left_trigger.down()) {
+        else if(input.left_trigger.held()) {
             RobotComponents.intakeouttake_servo.setDirection(CRServo.Direction.REVERSE);
             RobotComponents.intakeouttake_servo.setPower(intakePower);
         }
         else {
             RobotComponents.intakeouttake_servo.setPower(0);
         }
-        // TODO CHECK CORRECT POSITIONS
+
+
+        //Wrist Code
         if(input.left_bumper.down()) {
             RobotComponents.wrist_servo.setPosition(wristIntakePosition);
         }
@@ -317,21 +312,28 @@ public class CompDrive25 extends OpMode {
             RobotComponents.wrist_servo.setPosition(wristRetractedPosition);
         }
 
+        //EXTEND FOR PICKUP CODE
         if(input.x.held()&&!armMoving&&!armUp) {
-            pivotExtendTarget = pivotExtendTarget + PIVOTTICKSPEREXTENDOTICK;
-            RobotComponents.pivot_motor.setTargetPosition((int) pivotExtendTarget);
+            //Takes in previous slide motor position and uses it to calculate pivot motor movement
+            slideMovement = RobotComponents.left_slide_motor.getCurrentPosition() - previousSlideSpot;
+            pivotExtendTarget = pivotExtendTarget + (slideMovement*PIVOTTICKSPEREXTENDOTICK);
+            previousSlideSpot = RobotComponents.left_slide_motor.getCurrentPosition();
+
+            //Updating motors
+            RobotComponents.pivot_motor.setTargetPosition((int) Math.round(pivotExtendTarget));
             RobotComponents.right_slide_motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             RobotComponents.left_slide_motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             RobotComponents.right_slide_motor.setPower(slideMotorPickupPower);
             RobotComponents.left_slide_motor.setPower(slideMotorPickupPower);
             extendingPickupMode = true;
-        } else {
+        }
+        else if(!input.x.held()&&extendingPickupMode){
             pivotExtendTarget = 0;
             RobotComponents.right_slide_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             RobotComponents.left_slide_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             extendingPickupMode = false;
         }
-        //END OF i already hate this naming convention
+        //END OF i absolutely hate this naming convention
 
         //CLIMB CODE
         if(input.b.held()) {
@@ -348,30 +350,47 @@ public class CompDrive25 extends OpMode {
         }
         //END OF CLIMB CODE
 
-        //DRIVETRAIN CODE for PedroPathing
+        //DRIVETRAIN CODE
         follower.setTeleOpMovementVectors(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x);
         follower.update();
         //END OF DRIVETRAIN CODE
         input.pollGamepad(gamepad1);
 
         //TELEMETRY CODE
-        telemetry.addLine("---------------EXTENDO POSITIONS---------------");
+        telemetry.addLine("--------------- POSITIONS ---------------");
         telemetry.addData("Left slide motor current position:", RobotComponents.left_slide_motor.getCurrentPosition());
         telemetry.addData("Right slide motor current position:", RobotComponents.left_slide_motor.getCurrentPosition());
+        telemetry.addLine();
+        telemetry.addData("Pivot motor current position:", RobotComponents.pivot_motor.getCurrentPosition());
+        telemetry.addLine();
+        telemetry.addData("Wrist Position:", RobotComponents.wrist_servo.getPosition());
 
-        telemetry.addLine("---------------PIVOT POSITIONS---------------");
-        telemetry.addData("Pivot motor current position", RobotComponents.pivot_motor.getCurrentPosition());
+        telemetry.addLine("--------------- TARGETS ---------------");
+        telemetry.addData("Left slide motor target position:", RobotComponents.left_slide_motor.getTargetPosition());
+        telemetry.addData("Right slide motor current position:", RobotComponents.left_slide_motor.getTargetPosition());
+        telemetry.addLine();
+        telemetry.addData("Pivot motor target position:", RobotComponents.pivot_motor.getTargetPosition());
 
 
-        telemetry.addLine("--------CONDITIONALS BELOW THIS LINE----------");
-        if(RobotComponents.right_slide_motor.getMode()== DcMotor.RunMode.RUN_TO_POSITION) {
+        telemetry.addLine("------ CONDITIONALS BELOW THIS LINE ------");
+        if(extendingPickupMode) {
             telemetry.addLine("EXTENDO IN INTAKE MODE");
         }
+
         if(basket) {
             telemetry.addLine("BASKET MODE");
         }
+
         else{
-            telemetry.addLine("SPECEMIN MODE");
+            telemetry.addLine("SPECIMEN MODE");
+        }
+
+        if(armMoving){
+            telemetry.addLine("ARM IS MOVING");
+        }
+
+        if(armUp){
+            telemetry.addLine("ARM IS UP");
         }
         //END OF TELEMETRY
     }
