@@ -3,11 +3,14 @@ package org.firstinspires.ftc.teamcode.opmodes;
 
 public class Constants {
     public static final int pivotUpHighTarget = 1100;
+    //TODO FIX
+    public static final int pivotUpHighAUTOTarget = 1100;
     public static final int pivotMiddleTarget = 800;
     public static final int pivotUpLowTarget = 875;
     public static final int pivotDownPosition = 150;
     public static final int slideLowBasketPosition = 1250;
     public static final int slideHighBasketPosition = 2500;
+    public static final int slideHighBasketAUTOPosition = 2500;
     public static final int slideRetractedPosition = 5;
     public static final int pivotHighBarTarget = 800;
     public static final int pivotLowBarTarget = 575;

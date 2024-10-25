@@ -351,7 +351,7 @@ public class CompDrive25 extends OpMode {
         //END OF CLIMB CODE
 
         //DRIVETRAIN CODE
-        follower.setTeleOpMovementVectors(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x);
+        follower.setTeleOpMovementVectors(-gamepad1.left_stick_y, -gamepad1.left_stick_x, gamepad1.right_stick_x);
         follower.update();
         //END OF DRIVETRAIN CODE
         input.pollGamepad(gamepad1);
