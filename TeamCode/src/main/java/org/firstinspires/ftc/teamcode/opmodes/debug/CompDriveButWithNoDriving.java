@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.opmodes.teleop;
+package org.firstinspires.ftc.teamcode.opmodes.debug;
 
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.PIVOTPOWERDOWN;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.PIVOTTICKSPEREXTENDOTICK;
@@ -35,8 +35,8 @@ import org.firstinspires.ftc.teamcode.excutil.MotorPath;
 import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
 
 
-@TeleOp(group = "A most important group", name = "Competition Drive")
-public class CompDrive25 extends OpMode {
+@TeleOp(group = "A most important group", name = "Table 'Drive'")
+public class CompDriveButWithNoDriving extends OpMode {
     private Input input ;
     private Follower follower;
     //Set true on arm input, set false upon completion of steps
@@ -66,11 +66,6 @@ public class CompDrive25 extends OpMode {
         RobotComponents.init(hardwareMap);
         follower = new Follower(hardwareMap);
         follower.startTeleopDrive();
-    }
-
-    public void start() {
-        RobotComponents.pivot_motor.setTargetPosition(pivotDownPosition);
-        RobotComponents.wrist_servo.setPosition(wristIntakePosition);
     }
 
 
@@ -106,97 +101,97 @@ public class CompDrive25 extends OpMode {
             if(basket){
                 telemetry.addLine("BASKET MODE");
                 switch(armDirection) {
-                case "High Pole":
+                    case "High Pole":
 
-                    telemetry.addLine("Going High Basket");
+                        telemetry.addLine("Going High Basket");
 
-                    switch (currentArmStep){
-                        case(0):
-                            pivotMiddle = MotorPath.runToPosition(RobotComponents.pivot_motor, pivotMiddleTarget, pivotPower);
-                            if(pivotMiddle.isComplete(50, 2000)){currentArmStep = 1;}
-                            break;
+                        switch (currentArmStep){
+                            case(0):
+                                pivotMiddle = MotorPath.runToPosition(RobotComponents.pivot_motor, pivotMiddleTarget, pivotPower);
+                                if(pivotMiddle.isComplete(50, 2000)){currentArmStep = 1;}
+                                break;
 
-                        case(1):
-                            pivotUpHigh = MotorPath.runToPosition(RobotComponents.pivot_motor, pivotUpHighTarget, pivotPower2);
-                            if(pivotUpHigh.isComplete(50,2000)){currentArmStep = 2;}
-                            break;
+                            case(1):
+                                pivotUpHigh = MotorPath.runToPosition(RobotComponents.pivot_motor, pivotUpHighTarget, pivotPower2);
+                                if(pivotUpHigh.isComplete(50,2000)){currentArmStep = 2;}
+                                break;
 
-                        case(2):
-                            extendLeftHigh = MotorPath.runToPosition(RobotComponents.left_slide_motor, slideHighBasketPosition, extendPower);
-                            extendRightHigh = MotorPath.runToPosition(RobotComponents.right_slide_motor, slideHighBasketPosition, extendPower);
-                            if(extendLeftHigh.isComplete(50, 2000)&&extendRightHigh.isComplete(50,2000)){currentArmStep = 3;}
-                            break;
+                            case(2):
+                                extendLeftHigh = MotorPath.runToPosition(RobotComponents.left_slide_motor, slideHighBasketPosition, extendPower);
+                                extendRightHigh = MotorPath.runToPosition(RobotComponents.right_slide_motor, slideHighBasketPosition, extendPower);
+                                if(extendLeftHigh.isComplete(50, 2000)&&extendRightHigh.isComplete(50,2000)){currentArmStep = 3;}
+                                break;
 
-                        case(3):
-                            RobotComponents.wrist_servo.setPosition(wristIntakePosition);
-                            currentArmStep = 0;
-                            armMoving = false;
-                            armUp = true;
-                            break;
-                    }
-                    break;
+                            case(3):
+                                RobotComponents.wrist_servo.setPosition(wristIntakePosition);
+                                currentArmStep = 0;
+                                armMoving = false;
+                                armUp = true;
+                                break;
+                        }
+                        break;
 
-                case "Low Pole":
-                    telemetry.addLine("Going Low Basket");
+                    case "Low Pole":
+                        telemetry.addLine("Going Low Basket");
 
-                    switch (currentArmStep){
-                        case(0):
-                            pivotMiddle = MotorPath.runToPosition(RobotComponents.pivot_motor, pivotMiddleTarget, pivotPower);
-                            if(pivotMiddle.isComplete(50, 2000)){currentArmStep = 1;}
-                            break;
+                        switch (currentArmStep){
+                            case(0):
+                                pivotMiddle = MotorPath.runToPosition(RobotComponents.pivot_motor, pivotMiddleTarget, pivotPower);
+                                if(pivotMiddle.isComplete(50, 2000)){currentArmStep = 1;}
+                                break;
 
-                        case(1):
-                            pivotUpLow = MotorPath.runToPosition(RobotComponents.pivot_motor, pivotUpLowTarget, pivotPower2);
-                            if(pivotUpHigh.isComplete(50,2000)){currentArmStep = 2;}
-                            break;
+                            case(1):
+                                pivotUpLow = MotorPath.runToPosition(RobotComponents.pivot_motor, pivotUpLowTarget, pivotPower2);
+                                if(pivotUpHigh.isComplete(50,2000)){currentArmStep = 2;}
+                                break;
 
-                        case(2):
-                            extendLeftHigh = MotorPath.runToPosition(RobotComponents.left_slide_motor, slideLowBasketPosition, extendPower);
-                            extendRightHigh = MotorPath.runToPosition(RobotComponents.right_slide_motor, slideLowBasketPosition, extendPower);
-                            if(extendLeftHigh.isComplete(50, 2000)&&extendRightHigh.isComplete(50,2000)){currentArmStep = 3;}
-                            break;
+                            case(2):
+                                extendLeftHigh = MotorPath.runToPosition(RobotComponents.left_slide_motor, slideLowBasketPosition, extendPower);
+                                extendRightHigh = MotorPath.runToPosition(RobotComponents.right_slide_motor, slideLowBasketPosition, extendPower);
+                                if(extendLeftHigh.isComplete(50, 2000)&&extendRightHigh.isComplete(50,2000)){currentArmStep = 3;}
+                                break;
 
-                        case(3):
-                            RobotComponents.wrist_servo.setPosition(wristIntakePosition);
-                            currentArmStep = 0;
-                            armMoving = false;
-                            armUp = true;
-                            break;
-                    }
-                    break;
+                            case(3):
+                                RobotComponents.wrist_servo.setPosition(wristIntakePosition);
+                                currentArmStep = 0;
+                                armMoving = false;
+                                armUp = true;
+                                break;
+                        }
+                        break;
 
-                case "Retract":
+                    case "Retract":
 
-                    telemetry.addLine("Going Retracting");
+                        telemetry.addLine("Going Retracting");
 
-                    switch (currentArmStep){
-                        case(0):
-                            RobotComponents.intakeouttake_servo.setPower(0);
-                            RobotComponents.wrist_servo.setPosition(wristIntakePosition);
-                            currentArmStep = 1;
-                            break;
+                        switch (currentArmStep){
+                            case(0):
+                                RobotComponents.intakeouttake_servo.setPower(0);
+                                RobotComponents.wrist_servo.setPosition(wristIntakePosition);
+                                currentArmStep = 1;
+                                break;
 
-                        case(1):
-                            extendLeftHigh = MotorPath.runToPosition(RobotComponents.left_slide_motor, slideRetractedPosition, extendPower);
-                            extendRightHigh = MotorPath.runToPosition(RobotComponents.right_slide_motor, slideRetractedPosition, extendPower);
-                            if(extendLeftHigh.isComplete(50, 2000)&&extendRightHigh.isComplete(50,2000)){currentArmStep = 2;}
-                            break;
+                            case(1):
+                                extendLeftHigh = MotorPath.runToPosition(RobotComponents.left_slide_motor, slideRetractedPosition, extendPower);
+                                extendRightHigh = MotorPath.runToPosition(RobotComponents.right_slide_motor, slideRetractedPosition, extendPower);
+                                if(extendLeftHigh.isComplete(50, 2000)&&extendRightHigh.isComplete(50,2000)){currentArmStep = 2;}
+                                break;
 
-                        case(2):
-                            pivotMiddle = MotorPath.runToPosition(RobotComponents.pivot_motor, pivotMiddleTarget, pivotPower);
-                            if(pivotMiddle.isComplete(50, 2000)){currentArmStep = 3;}
-                            break;
+                            case(2):
+                                pivotMiddle = MotorPath.runToPosition(RobotComponents.pivot_motor, pivotMiddleTarget, pivotPower);
+                                if(pivotMiddle.isComplete(50, 2000)){currentArmStep = 3;}
+                                break;
 
-                        case(3):
-                            pivotDown = MotorPath.runToPosition(RobotComponents.pivot_motor, pivotDownPosition, PIVOTPOWERDOWN);
-                            currentArmStep = 0;
-                            armMoving = false;
-                            armUp = false;
-                            break;
+                            case(3):
+                                pivotDown = MotorPath.runToPosition(RobotComponents.pivot_motor, pivotDownPosition, PIVOTPOWERDOWN);
+                                currentArmStep = 0;
+                                armMoving = false;
+                                armUp = false;
+                                break;
 
-                    }
-                    break;
-            }
+                        }
+                        break;
+                }
             }
             if(!basket){
                 switch(armDirection) {
@@ -332,10 +327,9 @@ public class CompDrive25 extends OpMode {
             RobotComponents.left_slide_motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             RobotComponents.right_slide_motor.setPower(slideMotorPickupPower);
             RobotComponents.left_slide_motor.setPower(slideMotorPickupPower);
-            RobotComponents.pivot_motor.setPower(pivotPower);
             extendingPickupMode = true;
         }
-        else if(!input.a.held()&&extendingPickupMode && ((intakeTimeout - getRuntime()) > 15)){
+        else if(!input.a.held()&&extendingPickupMode && ((intakeTimeout - getRuntime()) > 150)){
             pivotExtendTarget = pivotDownPosition;
             RobotComponents.right_slide_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             RobotComponents.left_slide_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -363,8 +357,7 @@ public class CompDrive25 extends OpMode {
         //END OF CLIMB CODE
 
         //DRIVETRAIN CODE
-        follower.setTeleOpMovementVectors(-gamepad1.left_stick_y, -gamepad1.left_stick_x, gamepad1.right_stick_x);
-        follower.update();
+        //
         //END OF DRIVETRAIN CODE
         input.pollGamepad(gamepad1);
 
@@ -379,7 +372,7 @@ public class CompDrive25 extends OpMode {
 
         telemetry.addLine("--------------- TARGETS ---------------");
         telemetry.addData("Left slide motor target position:", RobotComponents.left_slide_motor.getTargetPosition());
-        telemetry.addData("Right slide motor target position:", RobotComponents.left_slide_motor.getTargetPosition());
+        telemetry.addData("Right slide motor current position:", RobotComponents.left_slide_motor.getTargetPosition());
         telemetry.addLine();
         telemetry.addData("Pivot motor target position:", RobotComponents.pivot_motor.getTargetPosition());
 

@@ -108,12 +108,12 @@ public class RobotTester extends OpMode {
         //CLIMB CODE
         if(input.b.held()) {
             RobotComponents.right_climb1_servo.setDirection(DcMotorSimple.Direction.FORWARD);
-            RobotComponents.left_climb1_servo.setDirection(DcMotorSimple.Direction.FORWARD);
+            RobotComponents.left_climb1_servo.setDirection(DcMotorSimple.Direction.REVERSE);
             RobotComponents.left_climb1_servo.setPower(climbServoPower);
             RobotComponents.right_climb1_servo.setPower(climbServoPower);
         }
         else if(input.x.held()) {
-            RobotComponents.left_climb1_servo.setDirection(DcMotorSimple.Direction.REVERSE);
+            RobotComponents.left_climb1_servo.setDirection(DcMotorSimple.Direction.FORWARD);
             RobotComponents.right_climb1_servo.setDirection(DcMotorSimple.Direction.REVERSE);
             RobotComponents.left_climb1_servo.setPower(climbServoPower);
             RobotComponents.right_climb1_servo.setPower(climbServoPower);

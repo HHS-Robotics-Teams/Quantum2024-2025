@@ -10,14 +10,14 @@ import static org.firstinspires.ftc.teamcode.opmodes.Constants.pivotUpHighAUTOTa
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.slideHighBasketAUTOPosition;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.slideRetractedPosition;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.wristIntakePosition;
-import static org.firstinspires.ftc.teamcode.opmodes.auto.AutoPositions.blueBasketPark;
-import static org.firstinspires.ftc.teamcode.opmodes.auto.AutoPositions.blueBasketParkControlPoint;
-import static org.firstinspires.ftc.teamcode.opmodes.auto.AutoPositions.blueBasketPickup1;
-import static org.firstinspires.ftc.teamcode.opmodes.auto.AutoPositions.blueBasketPickup2;
-import static org.firstinspires.ftc.teamcode.opmodes.auto.AutoPositions.blueBasketPickup3;
-import static org.firstinspires.ftc.teamcode.opmodes.auto.AutoPositions.blueBasketPickupControlPoint;
-import static org.firstinspires.ftc.teamcode.opmodes.auto.AutoPositions.blueBasketScorePose;
-import static org.firstinspires.ftc.teamcode.opmodes.auto.AutoPositions.blueBasketStartPose;
+import static org.firstinspires.ftc.teamcode.opmodes.auto.AutoPositions.redBasketPark;
+import static org.firstinspires.ftc.teamcode.opmodes.auto.AutoPositions.redBasketParkControlPoint;
+import static org.firstinspires.ftc.teamcode.opmodes.auto.AutoPositions.redBasketPickup1;
+import static org.firstinspires.ftc.teamcode.opmodes.auto.AutoPositions.redBasketPickup2;
+import static org.firstinspires.ftc.teamcode.opmodes.auto.AutoPositions.redBasketPickup3;
+import static org.firstinspires.ftc.teamcode.opmodes.auto.AutoPositions.redBasketPickupControlPoint;
+import static org.firstinspires.ftc.teamcode.opmodes.auto.AutoPositions.redBasketScorePose;
+import static org.firstinspires.ftc.teamcode.opmodes.auto.AutoPositions.redBasketStartPose;
 import static org.firstinspires.ftc.teamcode.opmodes.auto.AutoPositions.robotHeight;
 import static org.firstinspires.ftc.teamcode.opmodes.auto.AutoPositions.robotWidth;
 
@@ -27,7 +27,6 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.components.RobotComponents;
 import org.firstinspires.ftc.teamcode.excutil.MotorPath;
-import org.firstinspires.ftc.teamcode.excutil.coroutines.CoroutineManager;
 import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
 import org.firstinspires.ftc.teamcode.pedroPathing.localization.Pose;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierCurve;
@@ -35,10 +34,9 @@ import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierPoint;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.PathChain;
 
 @Autonomous
-public class BlueBasketSideAuto extends OpMode {
+public class RedBasketSideAuto extends OpMode {
 
     private Follower follower;
-    CoroutineManager manager = new CoroutineManager();
     private String step = "toBasket";
 
     private PathChain score1;
@@ -75,46 +73,46 @@ public class BlueBasketSideAuto extends OpMode {
 
     public void buildPaths() {
 
-        follower.setStartingPose(new Pose((robotWidth/2),(96-(robotHeight/2)),Math.toRadians(0)));
+        follower.setStartingPose(new Pose(144-(robotWidth/2),(48+(robotHeight/2)),Math.toRadians(180)));
 
         score1 = follower.pathBuilder()
-                .addPath(new BezierCurve(blueBasketStartPose, blueBasketPickupControlPoint, blueBasketScorePose))
-                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(135))
+                .addPath(new BezierCurve(redBasketStartPose, redBasketPickupControlPoint, redBasketScorePose))
+                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(-45))
                 .build();
 
         pickup1 = follower.pathBuilder()
-                .addPath(new BezierCurve(blueBasketScorePose, blueBasketPickupControlPoint, blueBasketPickup1))
-                .setLinearHeadingInterpolation(Math.toRadians(135), Math.toRadians(90))
+                .addPath(new BezierCurve(redBasketScorePose, redBasketPickupControlPoint, redBasketPickup1))
+                .setLinearHeadingInterpolation(Math.toRadians(-45), Math.toRadians(-90))
                 .build();
 
         score2 = follower.pathBuilder()
-                .addPath(new BezierCurve(blueBasketPickup1, blueBasketScorePose))
-                .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(135))
+                .addPath(new BezierCurve(redBasketPickup1, redBasketScorePose))
+                .setLinearHeadingInterpolation(Math.toRadians(-90), Math.toRadians(-45))
                 .build();
 
         pickup2 = follower.pathBuilder()
-                .addPath(new BezierCurve(blueBasketScorePose, blueBasketPickupControlPoint, blueBasketPickup2))
-                .setLinearHeadingInterpolation(Math.toRadians(135), Math.toRadians(90))
+                .addPath(new BezierCurve(redBasketScorePose, redBasketPickupControlPoint, redBasketPickup2))
+                .setLinearHeadingInterpolation(Math.toRadians(-45), Math.toRadians(-90))
                 .build();
 
         score3 = follower.pathBuilder()
-                .addPath(new BezierCurve(blueBasketPickup2, blueBasketScorePose))
-                .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(135))
+                .addPath(new BezierCurve(redBasketPickup2, redBasketScorePose))
+                .setLinearHeadingInterpolation(Math.toRadians(-90), Math.toRadians(-45))
                 .build();
 
         pickup3 = follower.pathBuilder()
-                .addPath(new BezierCurve(blueBasketScorePose, blueBasketPickup3))
-                .setLinearHeadingInterpolation(Math.toRadians(135), Math.toRadians(90))
+                .addPath(new BezierCurve(redBasketScorePose, redBasketPickup3))
+                .setLinearHeadingInterpolation(Math.toRadians(-45), Math.toRadians(-90))
                 .build();
 
         score4 = follower.pathBuilder()
-                .addPath(new BezierCurve(blueBasketPickup3, blueBasketScorePose))
-                .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(135))
+                .addPath(new BezierCurve(redBasketPickup3, redBasketScorePose))
+                .setLinearHeadingInterpolation(Math.toRadians(-90), Math.toRadians(-45))
                 .build();
 
         park = follower.pathBuilder()
-                .addPath(new BezierCurve(blueBasketScorePose, blueBasketParkControlPoint, blueBasketPark))
-                .setLinearHeadingInterpolation(Math.toRadians(135), Math.toRadians(0))
+                .addPath(new BezierCurve(redBasketScorePose, redBasketParkControlPoint, redBasketPark))
+                .setLinearHeadingInterpolation(Math.toRadians(-45), Math.toRadians(180))
                 .build();
 
     }
@@ -129,7 +127,7 @@ public class BlueBasketSideAuto extends OpMode {
                 }
                 break;
             case ("arm1"):
-                follower.holdPoint(new BezierPoint(blueBasketScorePose), Math.toRadians(135));
+                follower.holdPoint(new BezierPoint(redBasketScorePose), Math.toRadians(135));
                 if(!armDoneUp){
                     armUpAndScore();
                 }
@@ -149,7 +147,7 @@ public class BlueBasketSideAuto extends OpMode {
                 }
                 break;
             case("pickupPickup1"):
-                follower.holdPoint(new BezierPoint(blueBasketPickup1),Math.toRadians(90));
+                follower.holdPoint(new BezierPoint(redBasketPickup1),Math.toRadians(90));
                 intake();
                 if(doneIntaking){
                     step = "armPath1";
@@ -163,7 +161,7 @@ public class BlueBasketSideAuto extends OpMode {
                 }
                 break;
             case ("arm2"):
-                follower.holdPoint(new BezierPoint(blueBasketScorePose), Math.toRadians(135));
+                follower.holdPoint(new BezierPoint(redBasketScorePose), Math.toRadians(135));
                 if(!armDoneUp){
                     armUpAndScore();
                 }
@@ -183,7 +181,7 @@ public class BlueBasketSideAuto extends OpMode {
                 }
                 break;
             case("pickupPickup2"):
-                follower.holdPoint(new BezierPoint(blueBasketPickup2),Math.toRadians(90));
+                follower.holdPoint(new BezierPoint(redBasketPickup2),Math.toRadians(90));
                 intake();
                 if(doneIntaking){
                     step = "armPath2";
@@ -197,7 +195,7 @@ public class BlueBasketSideAuto extends OpMode {
                 }
                 break;
             case ("arm3"):
-                follower.holdPoint(new BezierPoint(blueBasketScorePose), Math.toRadians(135));
+                follower.holdPoint(new BezierPoint(redBasketScorePose), Math.toRadians(135));
                 if(!armDoneUp){
                     armUpAndScore();
                 }
@@ -217,7 +215,7 @@ public class BlueBasketSideAuto extends OpMode {
                 }
                 break;
             case("pickupPickup3"):
-                follower.holdPoint(new BezierPoint(blueBasketPickup3),Math.toRadians(90));
+                follower.holdPoint(new BezierPoint(redBasketPickup3),Math.toRadians(90));
                 intake();
                 if(doneIntaking){
                     step = "armPath3";
@@ -231,7 +229,7 @@ public class BlueBasketSideAuto extends OpMode {
                 }
                 break;
             case ("arm4"):
-                follower.holdPoint(new BezierPoint(blueBasketScorePose), Math.toRadians(135));
+                follower.holdPoint(new BezierPoint(redBasketScorePose), Math.toRadians(135));
                 armUpAndScore();
                 if (armDoneUp) {
                     step = "parkPath";

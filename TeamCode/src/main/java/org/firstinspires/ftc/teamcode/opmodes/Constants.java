@@ -3,7 +3,8 @@ package org.firstinspires.ftc.teamcode.opmodes;
 
 public class Constants {
     public static final int pivotUpHighTarget = 1100;
-    //TODO FIX
+    public static final double spoolRadius = 17.5;
+    //TODO TUNE AUTO
     public static final int pivotUpHighAUTOTarget = 1100;
     public static final int pivotMiddleTarget = 800;
     public static final int pivotUpLowTarget = 875;
@@ -25,7 +26,7 @@ public class Constants {
     public static final double extendPower = .8;
     public static double intakePower = .8;
     public static double climbServoPower = .4;
-    public static double slideMotorPickupPower = extendPower;
-    public static final double PIVOTTICKSPEREXTENDOTICK = 0.0217907228;
+    public static double slideMotorPickupPower = extendPower / 4;
+    public static final double PIVOTTICKSPEREXTENDOTICK = (1/(Math.cos((Math.PI*312*spoolRadius*slideMotorPickupPower)/30)));
 
 }
