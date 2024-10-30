@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.opmodes.teleop;
 
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.PIVOTPOWERDOWN;
-import static org.firstinspires.ftc.teamcode.opmodes.Constants.PIVOTTICKSPEREXTENDOTICK;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.climbServoPower;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.extendPower;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.intakePower;
@@ -26,33 +25,28 @@ import static org.firstinspires.ftc.teamcode.opmodes.Constants.wristRetractedPos
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.components.RobotComponents;
 import org.firstinspires.ftc.teamcode.excutil.Input;
 import org.firstinspires.ftc.teamcode.excutil.MotorPath;
-import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
 
 
 @TeleOp(group = "A most important group", name = "Competition Drive")
 public class CompDrive25 extends OpMode {
-    private Input input ;
-    private Follower follower;
+    public Input input ;
     //Set true on arm input, set false upon completion of steps
     public boolean armMoving = false;
     //Set true upon step completion, Set false upon down completion
     public boolean armUp = false;
-    //Set true when extending for pickup, set false otherwise
-    public boolean extendingPickupMode = false;
     //True if scoring basket, false otherwise
     public boolean basket = true;
+    //True if dpadRight pressed, false upon dpadLeft press
+    public boolean isExtending = false;
+    //Used to determine which macro is run
     public String armDirection;
+    //Used to step the macros
     public int currentArmStep;
-    public int slideMovement = 0;
-    public int previousSlideSpot = 0;
-    public double pivotExtendTarget = pivotDownPosition;
-    private double intakeTimeout;
 
     MotorPath pivotMiddle;
     MotorPath pivotDown;
@@ -64,8 +58,6 @@ public class CompDrive25 extends OpMode {
     public void init() {
         input = new Input();
         RobotComponents.init(hardwareMap);
-        follower = new Follower(hardwareMap);
-        follower.startTeleopDrive();
     }
 
     public void start() {
@@ -76,21 +68,25 @@ public class CompDrive25 extends OpMode {
 
     @Override
     public void loop() {
+        if(!armUp&&!armMoving&&!isExtending){RobotComponents.pivot_motor.setTargetPosition(pivotDownPosition);}
+        RobotComponents.pivot_motor.setPower(pivotPower2);
+        RobotComponents.right_slide_motor.setPower(slideMotorPickupPower);
+        RobotComponents.left_slide_motor.setPower(slideMotorPickupPower);
 
         //ARM CODE
-        if(input.dpad_up.down()&&!armMoving&&!extendingPickupMode){
+        if(input.dpad_up.down()&&!armMoving&&!isExtending){
             armMoving = true;
             armDirection = "High Pole";
             currentArmStep = 0;
         }
 
-        if(input.dpad_down.down()&&!armMoving&&!extendingPickupMode){
+        if(input.dpad_down.down()&&!armMoving&&!isExtending){
             armMoving = true;
             armDirection = "Low Pole";
             currentArmStep = 0;
         }
 
-        if((gamepad1.right_stick_button||gamepad1.left_stick_button)&&!armMoving&&!extendingPickupMode) {
+        if((gamepad1.right_stick_button||gamepad1.left_stick_button)&&!armMoving) {
             armMoving = true;
             armDirection = "Retract";
             currentArmStep = 0;
@@ -112,19 +108,23 @@ public class CompDrive25 extends OpMode {
 
                     switch (currentArmStep){
                         case(0):
-                            pivotMiddle = MotorPath.runToPosition(RobotComponents.pivot_motor, pivotMiddleTarget, pivotPower);
-                            if(pivotMiddle.isComplete(50, 2000)){currentArmStep = 1;}
+                            RobotComponents.pivot_motor.setTargetPosition(pivotMiddleTarget);
+                            RobotComponents.pivot_motor.setPower(pivotPower);
+                            if(Math.abs(RobotComponents.pivot_motor.getTargetPosition()-RobotComponents.pivot_motor.getCurrentPosition()) < 20){currentArmStep = 1;}
                             break;
 
                         case(1):
-                            pivotUpHigh = MotorPath.runToPosition(RobotComponents.pivot_motor, pivotUpHighTarget, pivotPower2);
-                            if(pivotUpHigh.isComplete(50,2000)){currentArmStep = 2;}
+                            RobotComponents.pivot_motor.setTargetPosition(pivotUpHighTarget);
+                            RobotComponents.pivot_motor.setPower(pivotPower2);
+                            if(Math.abs(RobotComponents.pivot_motor.getTargetPosition()-RobotComponents.pivot_motor.getCurrentPosition()) < 20){currentArmStep = 2;}
                             break;
 
                         case(2):
-                            extendLeftHigh = MotorPath.runToPosition(RobotComponents.left_slide_motor, slideHighBasketPosition, extendPower);
-                            extendRightHigh = MotorPath.runToPosition(RobotComponents.right_slide_motor, slideHighBasketPosition, extendPower);
-                            if(extendLeftHigh.isComplete(50, 2000)&&extendRightHigh.isComplete(50,2000)){currentArmStep = 3;}
+                            RobotComponents.left_slide_motor.setPower(extendPower);
+                            RobotComponents.right_slide_motor.setPower(extendPower);
+                            RobotComponents.left_slide_motor.setTargetPosition(slideHighBasketPosition);
+                            RobotComponents.right_slide_motor.setTargetPosition(slideHighBasketPosition);
+                            if(Math.abs(RobotComponents.left_slide_motor.getTargetPosition()-RobotComponents.left_slide_motor.getCurrentPosition()) < 20){currentArmStep = 3;}
                             break;
 
                         case(3):
@@ -141,19 +141,23 @@ public class CompDrive25 extends OpMode {
 
                     switch (currentArmStep){
                         case(0):
-                            pivotMiddle = MotorPath.runToPosition(RobotComponents.pivot_motor, pivotMiddleTarget, pivotPower);
-                            if(pivotMiddle.isComplete(50, 2000)){currentArmStep = 1;}
+                            RobotComponents.pivot_motor.setTargetPosition(pivotMiddleTarget);
+                            RobotComponents.pivot_motor.setPower(pivotPower);
+                            if(Math.abs(RobotComponents.pivot_motor.getTargetPosition()-RobotComponents.pivot_motor.getCurrentPosition()) < 20){currentArmStep = 1;}
                             break;
 
                         case(1):
-                            pivotUpLow = MotorPath.runToPosition(RobotComponents.pivot_motor, pivotUpLowTarget, pivotPower2);
-                            if(pivotUpHigh.isComplete(50,2000)){currentArmStep = 2;}
+                            RobotComponents.pivot_motor.setTargetPosition(pivotUpLowTarget);
+                            RobotComponents.pivot_motor.setPower(pivotPower2);
+                            if(Math.abs(RobotComponents.pivot_motor.getTargetPosition()-RobotComponents.pivot_motor.getCurrentPosition()) < 20){currentArmStep = 2;}
                             break;
 
                         case(2):
-                            extendLeftHigh = MotorPath.runToPosition(RobotComponents.left_slide_motor, slideLowBasketPosition, extendPower);
-                            extendRightHigh = MotorPath.runToPosition(RobotComponents.right_slide_motor, slideLowBasketPosition, extendPower);
-                            if(extendLeftHigh.isComplete(50, 2000)&&extendRightHigh.isComplete(50,2000)){currentArmStep = 3;}
+                            RobotComponents.left_slide_motor.setPower(extendPower);
+                            RobotComponents.right_slide_motor.setPower(extendPower);
+                            RobotComponents.left_slide_motor.setTargetPosition(slideLowBasketPosition);
+                            RobotComponents.right_slide_motor.setTargetPosition(slideLowBasketPosition);
+                            if(Math.abs(RobotComponents.left_slide_motor.getTargetPosition()-RobotComponents.left_slide_motor.getCurrentPosition()) < 20){currentArmStep = 3;}
                             break;
 
                         case(3):
@@ -177,18 +181,23 @@ public class CompDrive25 extends OpMode {
                             break;
 
                         case(1):
-                            extendLeftHigh = MotorPath.runToPosition(RobotComponents.left_slide_motor, slideRetractedPosition, extendPower);
-                            extendRightHigh = MotorPath.runToPosition(RobotComponents.right_slide_motor, slideRetractedPosition, extendPower);
-                            if(extendLeftHigh.isComplete(50, 2000)&&extendRightHigh.isComplete(50,2000)){currentArmStep = 2;}
+                            RobotComponents.left_slide_motor.setPower(extendPower);
+                            RobotComponents.right_slide_motor.setPower(extendPower);
+                            RobotComponents.left_slide_motor.setTargetPosition(slideRetractedPosition);
+                            RobotComponents.right_slide_motor.setTargetPosition(slideRetractedPosition);
+                            if(Math.abs(RobotComponents.left_slide_motor.getTargetPosition()-RobotComponents.left_slide_motor.getCurrentPosition()) < 20){currentArmStep = 2;}
                             break;
 
                         case(2):
-                            pivotMiddle = MotorPath.runToPosition(RobotComponents.pivot_motor, pivotMiddleTarget, pivotPower);
-                            if(pivotMiddle.isComplete(50, 2000)){currentArmStep = 3;}
+                            if(isExtending){currentArmStep=3;isExtending=false;break;}
+                            RobotComponents.pivot_motor.setTargetPosition(pivotMiddleTarget);
+                            RobotComponents.pivot_motor.setPower(pivotPower);
+                            if(Math.abs(RobotComponents.pivot_motor.getTargetPosition()-RobotComponents.pivot_motor.getCurrentPosition()) < 20){currentArmStep = 3;}
                             break;
 
                         case(3):
-                            pivotDown = MotorPath.runToPosition(RobotComponents.pivot_motor, pivotDownPosition, PIVOTPOWERDOWN);
+                            RobotComponents.pivot_motor.setTargetPosition(pivotDownPosition);
+                            RobotComponents.pivot_motor.setPower(pivotPower2);
                             currentArmStep = 0;
                             armMoving = false;
                             armUp = false;
@@ -206,19 +215,23 @@ public class CompDrive25 extends OpMode {
 
                         switch (currentArmStep){
                             case(0):
-                                pivotMiddle = MotorPath.runToPosition(RobotComponents.pivot_motor, pivotMiddleTarget, pivotPower);
-                                if(pivotMiddle.isComplete(50, 2000)){currentArmStep = 1;}
+                                RobotComponents.pivot_motor.setTargetPosition(pivotMiddleTarget);
+                                RobotComponents.pivot_motor.setPower(pivotPower);
+                                if(Math.abs(RobotComponents.pivot_motor.getTargetPosition()-RobotComponents.pivot_motor.getCurrentPosition()) < 20){currentArmStep = 1;}
                                 break;
 
                             case(1):
-                                pivotUpHigh = MotorPath.runToPosition(RobotComponents.pivot_motor, pivotHighBarTarget, pivotPower2);
-                                if(pivotUpHigh.isComplete(50,2000)){currentArmStep = 2;}
+                                RobotComponents.pivot_motor.setTargetPosition(pivotHighBarTarget);
+                                RobotComponents.pivot_motor.setPower(pivotPower2);
+                                if(Math.abs(RobotComponents.pivot_motor.getTargetPosition()-RobotComponents.pivot_motor.getCurrentPosition()) < 20){currentArmStep = 2;}
                                 break;
 
                             case(2):
-                                extendLeftHigh = MotorPath.runToPosition(RobotComponents.left_slide_motor, slideHighBarPosition, extendPower);
-                                extendRightHigh = MotorPath.runToPosition(RobotComponents.right_slide_motor, slideHighBarPosition, extendPower);
-                                if(extendLeftHigh.isComplete(50, 2000)&&extendRightHigh.isComplete(50,2000)){currentArmStep = 3;}
+                                RobotComponents.left_slide_motor.setPower(extendPower);
+                                RobotComponents.right_slide_motor.setPower(extendPower);
+                                RobotComponents.left_slide_motor.setTargetPosition(slideHighBarPosition);
+                                RobotComponents.right_slide_motor.setTargetPosition(slideHighBarPosition);
+                                if(Math.abs(RobotComponents.left_slide_motor.getTargetPosition()-RobotComponents.left_slide_motor.getCurrentPosition()) < 20){currentArmStep = 3;}
                                 break;
 
                             case(3):
@@ -231,23 +244,27 @@ public class CompDrive25 extends OpMode {
                         break;
 
                     case "Low Pole":
-                        telemetry.addLine("Going Low Bar");
+                        telemetry.addLine("Going Low Basket");
 
                         switch (currentArmStep){
                             case(0):
-                                pivotMiddle = MotorPath.runToPosition(RobotComponents.pivot_motor, pivotMiddleTarget, pivotPower);
-                                if(pivotMiddle.isComplete(50, 2000)){currentArmStep = 1;}
+                                RobotComponents.pivot_motor.setTargetPosition(pivotMiddleTarget);
+                                RobotComponents.pivot_motor.setPower(pivotPower);
+                                if(Math.abs(RobotComponents.pivot_motor.getTargetPosition()-RobotComponents.pivot_motor.getCurrentPosition()) < 20){currentArmStep = 1;}
                                 break;
 
                             case(1):
-                                pivotUpLow = MotorPath.runToPosition(RobotComponents.pivot_motor, pivotLowBarTarget, pivotPower2);
-                                if(pivotUpHigh.isComplete(50,2000)){currentArmStep = 2;}
+                                RobotComponents.pivot_motor.setTargetPosition(pivotLowBarTarget);
+                                RobotComponents.pivot_motor.setPower(pivotPower2);
+                                if(Math.abs(RobotComponents.pivot_motor.getTargetPosition()-RobotComponents.pivot_motor.getCurrentPosition()) < 20){currentArmStep = 2;}
                                 break;
 
                             case(2):
-                                extendLeftHigh = MotorPath.runToPosition(RobotComponents.left_slide_motor, slideLowBarPosition, extendPower);
-                                extendRightHigh = MotorPath.runToPosition(RobotComponents.right_slide_motor, slideLowBarPosition, extendPower);
-                                if(extendLeftHigh.isComplete(50, 2000)&&extendRightHigh.isComplete(50,2000)){currentArmStep = 3;}
+                                RobotComponents.left_slide_motor.setPower(extendPower);
+                                RobotComponents.right_slide_motor.setPower(extendPower);
+                                RobotComponents.left_slide_motor.setTargetPosition(slideLowBarPosition);
+                                RobotComponents.right_slide_motor.setTargetPosition(slideLowBarPosition);
+                                if(Math.abs(RobotComponents.left_slide_motor.getTargetPosition()-RobotComponents.left_slide_motor.getCurrentPosition()) < 20){currentArmStep = 3;}
                                 break;
 
                             case(3):
@@ -271,18 +288,23 @@ public class CompDrive25 extends OpMode {
                                 break;
 
                             case(1):
-                                extendLeftHigh = MotorPath.runToPosition(RobotComponents.left_slide_motor, slideRetractedPosition, extendPower);
-                                extendRightHigh = MotorPath.runToPosition(RobotComponents.right_slide_motor, slideRetractedPosition, extendPower);
-                                if(extendLeftHigh.isComplete(50, 2000)&&extendRightHigh.isComplete(50,2000)){currentArmStep = 2;}
+                                RobotComponents.left_slide_motor.setPower(extendPower);
+                                RobotComponents.right_slide_motor.setPower(extendPower);
+                                RobotComponents.left_slide_motor.setTargetPosition(slideRetractedPosition);
+                                RobotComponents.right_slide_motor.setTargetPosition(slideRetractedPosition);
+                                if(Math.abs(RobotComponents.left_slide_motor.getTargetPosition()-RobotComponents.left_slide_motor.getCurrentPosition()) < 20){currentArmStep = 2;}
                                 break;
 
                             case(2):
-                                pivotMiddle = MotorPath.runToPosition(RobotComponents.pivot_motor, pivotMiddleTarget, pivotPower);
-                                if(pivotMiddle.isComplete(50, 2000)){currentArmStep = 3;}
+                                if(isExtending){currentArmStep=3;isExtending=false;break;}
+                                RobotComponents.pivot_motor.setTargetPosition(pivotMiddleTarget);
+                                RobotComponents.pivot_motor.setPower(pivotPower);
+                                if(Math.abs(RobotComponents.pivot_motor.getTargetPosition()-RobotComponents.pivot_motor.getCurrentPosition()) < 20){currentArmStep = 3;}
                                 break;
 
                             case(3):
-                                pivotDown = MotorPath.runToPosition(RobotComponents.pivot_motor, pivotDownPosition, PIVOTPOWERDOWN);
+                                RobotComponents.pivot_motor.setTargetPosition(pivotDownPosition);
+                                RobotComponents.pivot_motor.setPower(pivotPower2);
                                 currentArmStep = 0;
                                 armMoving = false;
                                 armUp = false;
@@ -292,6 +314,7 @@ public class CompDrive25 extends OpMode {
                         break;
                 }
             }
+            telemetry.addLine();
         }
         //END OF ARM CODE
 
@@ -319,27 +342,21 @@ public class CompDrive25 extends OpMode {
         }
 
         //EXTEND FOR PICKUP CODE
-        if(input.a.held()&&!armMoving&&!armUp) {
-            intakeTimeout = getRuntime();
-            //Takes in previous slide motor position and uses it to calculate pivot motor movement
-            slideMovement = RobotComponents.left_slide_motor.getCurrentPosition() - previousSlideSpot;
-            pivotExtendTarget = pivotExtendTarget + (slideMovement*PIVOTTICKSPEREXTENDOTICK);
-            previousSlideSpot = RobotComponents.left_slide_motor.getCurrentPosition();
-
-            //Updating motors
-            RobotComponents.pivot_motor.setTargetPosition((int) Math.round(pivotExtendTarget));
-            RobotComponents.right_slide_motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            RobotComponents.left_slide_motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            RobotComponents.right_slide_motor.setPower(slideMotorPickupPower);
-            RobotComponents.left_slide_motor.setPower(slideMotorPickupPower);
-            RobotComponents.pivot_motor.setPower(pivotPower);
-            extendingPickupMode = true;
+        if(input.y.held()){
+            RobotComponents.pivot_motor.setTargetPosition(RobotComponents.pivot_motor.getTargetPosition()+5);
         }
-        else if(!input.a.held()&&extendingPickupMode && ((intakeTimeout - getRuntime()) > 15)){
-            pivotExtendTarget = pivotDownPosition;
-            RobotComponents.right_slide_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            RobotComponents.left_slide_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            extendingPickupMode = false;
+        if(input.a.held()){
+            RobotComponents.pivot_motor.setTargetPosition(RobotComponents.pivot_motor.getTargetPosition()-5);
+        }
+        if(input.dpad_right.held()){
+            isExtending = true;
+            RobotComponents.right_slide_motor.setTargetPosition(RobotComponents.right_slide_motor.getTargetPosition() + 15);
+            RobotComponents.left_slide_motor.setTargetPosition(RobotComponents.left_slide_motor.getTargetPosition() + 15);
+        }
+        if(input.dpad_left.down()) {
+            isExtending = false;
+            RobotComponents.left_slide_motor.setTargetPosition(slideRetractedPosition);
+            RobotComponents.right_slide_motor.setTargetPosition(slideRetractedPosition);
         }
         //END OF i absolutely hate this naming convention
 
@@ -363,10 +380,15 @@ public class CompDrive25 extends OpMode {
         //END OF CLIMB CODE
 
         //DRIVETRAIN CODE
-        follower.setTeleOpMovementVectors(-gamepad1.left_stick_y, -gamepad1.left_stick_x, gamepad1.right_stick_x);
-        follower.update();
+        double y = -gamepad1.left_stick_y; // Remember, Y stick is reversed!
+        double x = gamepad1.left_stick_x;
+        double rx = -gamepad1.right_stick_x;
+
+        RobotComponents.leftFront.setPower(y + x + rx);
+        RobotComponents.leftRear.setPower(y - x + rx);
+        RobotComponents.rightFront.setPower(y - x - rx);
+        RobotComponents.rightRear.setPower(y + x - rx);
         //END OF DRIVETRAIN CODE
-        input.pollGamepad(gamepad1);
 
         //TELEMETRY CODE
         telemetry.addLine("--------------- POSITIONS ---------------");
@@ -385,27 +407,27 @@ public class CompDrive25 extends OpMode {
 
 
         telemetry.addLine("------ CONDITIONALS BELOW THIS LINE ------");
-        if(extendingPickupMode) {
+        if(isExtending) {
             telemetry.addLine("EXTENDO IN INTAKE MODE");
         }
 
-        if(basket)   {
+        if(basket) {
             telemetry.addLine("BASKET MODE");
         }
 
-        else         {
+        else {
             telemetry.addLine("SPECIMEN MODE");
         }
 
-        if(armMoving){
+        if(armMoving) {
             telemetry.addLine("ARM IS MOVING");
         }
 
-        if(armUp)    {
+        if(armUp) {
             telemetry.addLine("ARM IS UP");
         }
-
         //END OF TELEMETRY
+        input.pollGamepad(gamepad1);
     }
 
 }

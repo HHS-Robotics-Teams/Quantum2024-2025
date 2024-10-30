@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.opmodes.debug;
 
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.PIVOTPOWERDOWN;
-import static org.firstinspires.ftc.teamcode.opmodes.Constants.PIVOTTICKSPEREXTENDOTICK;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.climbServoPower;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.extendPower;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.intakePower;
@@ -32,13 +31,11 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import org.firstinspires.ftc.teamcode.components.RobotComponents;
 import org.firstinspires.ftc.teamcode.excutil.Input;
 import org.firstinspires.ftc.teamcode.excutil.MotorPath;
-import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
 
 
 @TeleOp(group = "A most important group", name = "Table 'Drive'")
 public class CompDriveButWithNoDriving extends OpMode {
     private Input input ;
-    private Follower follower;
     //Set true on arm input, set false upon completion of steps
     public boolean armMoving = false;
     //Set true upon step completion, Set false upon down completion
@@ -47,12 +44,10 @@ public class CompDriveButWithNoDriving extends OpMode {
     public boolean extendingPickupMode = false;
     //True if scoring basket, false otherwise
     public boolean basket = true;
+    //True if dpadRight pressed, false upon dpadLeft press
+    public boolean isExtending = false;
     public String armDirection;
     public int currentArmStep;
-    public int slideMovement = 0;
-    public int previousSlideSpot = 0;
-    public double pivotExtendTarget = pivotDownPosition;
-    private double intakeTimeout;
 
     MotorPath pivotMiddle;
     MotorPath pivotDown;
@@ -64,22 +59,28 @@ public class CompDriveButWithNoDriving extends OpMode {
     public void init() {
         input = new Input();
         RobotComponents.init(hardwareMap);
-        follower = new Follower(hardwareMap);
-        follower.startTeleopDrive();
+    }
+
+    public void start() {
+        RobotComponents.pivot_motor.setTargetPosition(pivotDownPosition);
+        RobotComponents.wrist_servo.setPosition(wristIntakePosition);
     }
 
 
     @Override
     public void loop() {
+        RobotComponents.pivot_motor.setPower(pivotPower2/2);
+        RobotComponents.right_slide_motor.setPower(slideMotorPickupPower);
+        RobotComponents.left_slide_motor.setPower(slideMotorPickupPower);
 
         //ARM CODE
-        if(input.dpad_up.down()&&!armMoving&&!extendingPickupMode){
+        if(input.dpad_up.down()&&!armMoving&&!extendingPickupMode&&!isExtending){
             armMoving = true;
             armDirection = "High Pole";
             currentArmStep = 0;
         }
 
-        if(input.dpad_down.down()&&!armMoving&&!extendingPickupMode){
+        if(input.dpad_down.down()&&!armMoving&&!extendingPickupMode&&!isExtending){
             armMoving = true;
             armDirection = "Low Pole";
             currentArmStep = 0;
@@ -178,6 +179,7 @@ public class CompDriveButWithNoDriving extends OpMode {
                                 break;
 
                             case(2):
+                                if(isExtending){currentArmStep=3;break;}
                                 pivotMiddle = MotorPath.runToPosition(RobotComponents.pivot_motor, pivotMiddleTarget, pivotPower);
                                 if(pivotMiddle.isComplete(50, 2000)){currentArmStep = 3;}
                                 break;
@@ -272,6 +274,7 @@ public class CompDriveButWithNoDriving extends OpMode {
                                 break;
 
                             case(2):
+                                if(isExtending){currentArmStep=3;break;}
                                 pivotMiddle = MotorPath.runToPosition(RobotComponents.pivot_motor, pivotMiddleTarget, pivotPower);
                                 if(pivotMiddle.isComplete(50, 2000)){currentArmStep = 3;}
                                 break;
@@ -314,26 +317,22 @@ public class CompDriveButWithNoDriving extends OpMode {
         }
 
         //EXTEND FOR PICKUP CODE
-        if(input.a.held()&&!armMoving&&!armUp) {
-            intakeTimeout = getRuntime();
-            //Takes in previous slide motor position and uses it to calculate pivot motor movement
-            slideMovement = RobotComponents.left_slide_motor.getCurrentPosition() - previousSlideSpot;
-            pivotExtendTarget = pivotExtendTarget + (slideMovement*PIVOTTICKSPEREXTENDOTICK);
-            previousSlideSpot = RobotComponents.left_slide_motor.getCurrentPosition();
-
-            //Updating motors
-            RobotComponents.pivot_motor.setTargetPosition((int) Math.round(pivotExtendTarget));
-            RobotComponents.right_slide_motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            RobotComponents.left_slide_motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            RobotComponents.right_slide_motor.setPower(slideMotorPickupPower);
-            RobotComponents.left_slide_motor.setPower(slideMotorPickupPower);
-            extendingPickupMode = true;
+        if(input.y.held()){
+            RobotComponents.pivot_motor.setTargetPosition(RobotComponents.pivot_motor.getTargetPosition()+5);
         }
-        else if(!input.a.held()&&extendingPickupMode && ((intakeTimeout - getRuntime()) > 150)){
-            pivotExtendTarget = pivotDownPosition;
-            RobotComponents.right_slide_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            RobotComponents.left_slide_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            extendingPickupMode = false;
+        if(input.a.held()){
+            RobotComponents.pivot_motor.setTargetPosition(RobotComponents.pivot_motor.getTargetPosition()-5);
+        }
+        if(input.dpad_right.held()){
+            isExtending = true;
+            RobotComponents.right_slide_motor.setTargetPosition(RobotComponents.right_slide_motor.getTargetPosition() + 15);
+            RobotComponents.left_slide_motor.setTargetPosition(RobotComponents.left_slide_motor.getTargetPosition() + 15);
+        }
+        if(input.dpad_left.down()) {
+            isExtending = false;
+            RobotComponents.left_slide_motor.setTargetPosition(slideRetractedPosition);
+            RobotComponents.right_slide_motor.setTargetPosition(slideRetractedPosition);
+            RobotComponents.pivot_motor.setTargetPosition(pivotDownPosition);
         }
         //END OF i absolutely hate this naming convention
 
@@ -356,9 +355,6 @@ public class CompDriveButWithNoDriving extends OpMode {
         }
         //END OF CLIMB CODE
 
-        //DRIVETRAIN CODE
-        //
-        //END OF DRIVETRAIN CODE
         input.pollGamepad(gamepad1);
 
         //TELEMETRY CODE
@@ -372,7 +368,7 @@ public class CompDriveButWithNoDriving extends OpMode {
 
         telemetry.addLine("--------------- TARGETS ---------------");
         telemetry.addData("Left slide motor target position:", RobotComponents.left_slide_motor.getTargetPosition());
-        telemetry.addData("Right slide motor current position:", RobotComponents.left_slide_motor.getTargetPosition());
+        telemetry.addData("Right slide motor target position:", RobotComponents.left_slide_motor.getTargetPosition());
         telemetry.addLine();
         telemetry.addData("Pivot motor target position:", RobotComponents.pivot_motor.getTargetPosition());
 

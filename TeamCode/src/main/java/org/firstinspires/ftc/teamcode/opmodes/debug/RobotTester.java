@@ -8,13 +8,9 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.components.RobotComponents;
 import org.firstinspires.ftc.teamcode.excutil.Input;
-import org.firstinspires.ftc.teamcode.excutil.coroutines.CoroutineManager;
-import org.firstinspires.ftc.teamcode.opmodes.teleop.CompDrive25;
-import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
 
 @TeleOp
 public class RobotTester extends OpMode {
@@ -24,14 +20,14 @@ public class RobotTester extends OpMode {
     double servoMove = .2;
     int movementAmount = 20;
     private Input input ;
-    private Follower follower;
+    private double turnPower;
+    private double strafePower;
+    private double drivePower;
     boolean isUp = false;
     @Override
     public void init() {
         input = new Input();
         RobotComponents.init(hardwareMap);
-        follower = new Follower(hardwareMap);
-        follower.startTeleopDrive();
         telemetry.speak("Testing Mode Enabled");
         telemetry.addLine("Press Play to enter testing mode");
         RobotComponents.pivot_motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -124,8 +120,15 @@ public class RobotTester extends OpMode {
         //END OF CLIMB CODE
 
         //DRIVETRAIN CODE for PedroPathing Mecanum drive
-        follower.setTeleOpMovementVectors(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x);
-        follower.update();
+        turnPower = gamepad1.right_stick_x;
+        drivePower = gamepad1.left_stick_y;
+        strafePower = gamepad1.left_stick_x;
+
+
+        RobotComponents.leftFront.setPower(drivePower + strafePower + turnPower);
+        RobotComponents.rightFront.setPower(drivePower - strafePower - turnPower);
+        RobotComponents.leftRear.setPower(drivePower - strafePower + turnPower);
+        RobotComponents.rightRear.setPower(drivePower + strafePower - turnPower);
         //END OF DRIVETRAIN CODE
         RobotComponents.pivot_motor.setPower(pivotPower);
         RobotComponents.left_slide_motor.setPower(slidePower);
