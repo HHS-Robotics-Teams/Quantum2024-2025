@@ -383,6 +383,11 @@ public class CompDrive25 extends OpMode {
         double y = -gamepad1.left_stick_y; // Remember, Y stick is reversed!
         double x = gamepad1.left_stick_x;
         double rx = -gamepad1.right_stick_x;
+        if(armUp){
+            y=y/4;
+            x=x/4;
+            rx=rx/4;
+        }
 
         RobotComponents.leftFront.setPower(y + x + rx);
         RobotComponents.leftRear.setPower(y - x + rx);
