@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.opmodes.teleop;
 
-import static org.firstinspires.ftc.teamcode.opmodes.Constants.PIVOTPOWERDOWN;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.climbServoPower;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.extendPower;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.intakePower;
@@ -20,7 +19,6 @@ import static org.firstinspires.ftc.teamcode.opmodes.Constants.slideMotorPickupP
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.slideRetractedPosition;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.wristBarPosition;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.wristIntakePosition;
-import static org.firstinspires.ftc.teamcode.opmodes.Constants.wristRetractedPosition;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -29,11 +27,10 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.components.RobotComponents;
 import org.firstinspires.ftc.teamcode.excutil.Input;
-import org.firstinspires.ftc.teamcode.excutil.MotorPath;
-
 
 @TeleOp(group = "A most important group", name = "Competition Drive")
 public class CompDrive25 extends OpMode {
+    //TODO REMEMBER TO PUT IN THE TUNING FOR MEEPMEEP
     public Input input ;
     //Set true on arm input, set false upon completion of steps
     public boolean armMoving = false;
@@ -48,12 +45,6 @@ public class CompDrive25 extends OpMode {
     //Used to step the macros
     public int currentArmStep;
 
-    MotorPath pivotMiddle;
-    MotorPath pivotDown;
-    MotorPath pivotUpHigh;
-    MotorPath pivotUpLow;
-    MotorPath extendLeftHigh;
-    MotorPath extendRightHigh;
     @Override
     public void init() {
         input = new Input();
@@ -334,11 +325,11 @@ public class CompDrive25 extends OpMode {
 
         //Wrist Code
         if(input.left_bumper.down()) {
-            RobotComponents.wrist_servo.setPosition(wristIntakePosition);
+            RobotComponents.wrist_servo.setPosition(RobotComponents.wrist_servo.getPosition()-.05);
         }
 
         if(input.right_bumper.down()) {
-            RobotComponents.wrist_servo.setPosition(wristRetractedPosition);
+            RobotComponents.wrist_servo.setPosition(RobotComponents.wrist_servo.getPosition()+.05);
         }
 
         //EXTEND FOR PICKUP CODE
