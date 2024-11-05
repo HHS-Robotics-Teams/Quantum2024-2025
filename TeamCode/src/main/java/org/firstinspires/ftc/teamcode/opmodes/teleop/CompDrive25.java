@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.opmodes.teleop;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.climbServoPower;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.extendPower;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.intakePower;
+import static org.firstinspires.ftc.teamcode.opmodes.Constants.macroTimetoTimeout;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.pivotDownPosition;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.pivotHighBarTarget;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.pivotLowBarTarget;
@@ -44,6 +45,7 @@ public class CompDrive25 extends OpMode {
     public String armDirection;
     //Used to step the macros
     public int currentArmStep;
+    public double macroTimeout;
 
     @Override
     public void init() {
@@ -66,18 +68,21 @@ public class CompDrive25 extends OpMode {
 
         //ARM CODE
         if(input.dpad_up.down()&&!armMoving&&!isExtending){
+            macroTimeout = getRuntime();
             armMoving = true;
             armDirection = "High Pole";
             currentArmStep = 0;
         }
 
         if(input.dpad_down.down()&&!armMoving&&!isExtending){
+            macroTimeout = getRuntime();
             armMoving = true;
             armDirection = "Low Pole";
             currentArmStep = 0;
         }
 
         if((gamepad1.right_stick_button||gamepad1.left_stick_button)&&!armMoving) {
+            macroTimeout = getRuntime();
             armMoving = true;
             armDirection = "Retract";
             currentArmStep = 0;
@@ -87,11 +92,16 @@ public class CompDrive25 extends OpMode {
             basket = !basket;
         }
 
+        //ARM LOGIC
         if(armMoving){
+
             telemetry.addLine("ARM IS MOVING");
             telemetry.addData("ArmStep:", currentArmStep);
+
             if(basket){
+
                 telemetry.addLine("BASKET MODE");
+
                 switch(armDirection) {
                 case "High Pole":
 
@@ -101,13 +111,21 @@ public class CompDrive25 extends OpMode {
                         case(0):
                             RobotComponents.pivot_motor.setTargetPosition(pivotMiddleTarget);
                             RobotComponents.pivot_motor.setPower(pivotPower);
-                            if(Math.abs(RobotComponents.pivot_motor.getTargetPosition()-RobotComponents.pivot_motor.getCurrentPosition()) < 20){currentArmStep = 1;}
+                            if((Math.abs(RobotComponents.pivot_motor.getTargetPosition()-RobotComponents.pivot_motor.getCurrentPosition()) < 20)
+                                ||((getRuntime()-macroTimeout)>macroTimetoTimeout)){
+                                    currentArmStep = 1;
+                                    macroTimeout = getRuntime();
+                            }
                             break;
 
                         case(1):
                             RobotComponents.pivot_motor.setTargetPosition(pivotUpHighTarget);
                             RobotComponents.pivot_motor.setPower(pivotPower2);
-                            if(Math.abs(RobotComponents.pivot_motor.getTargetPosition()-RobotComponents.pivot_motor.getCurrentPosition()) < 20){currentArmStep = 2;}
+                            if(Math.abs(RobotComponents.pivot_motor.getTargetPosition()-RobotComponents.pivot_motor.getCurrentPosition()) < 20
+                                ||((getRuntime()-macroTimeout)>macroTimetoTimeout)){
+                                    currentArmStep = 2;
+                                    macroTimeout=getRuntime();
+                            }
                             break;
 
                         case(2):
@@ -115,7 +133,11 @@ public class CompDrive25 extends OpMode {
                             RobotComponents.right_slide_motor.setPower(extendPower);
                             RobotComponents.left_slide_motor.setTargetPosition(slideHighBasketPosition);
                             RobotComponents.right_slide_motor.setTargetPosition(slideHighBasketPosition);
-                            if(Math.abs(RobotComponents.left_slide_motor.getTargetPosition()-RobotComponents.left_slide_motor.getCurrentPosition()) < 20){currentArmStep = 3;}
+                            if(Math.abs(RobotComponents.left_slide_motor.getTargetPosition()-RobotComponents.left_slide_motor.getCurrentPosition()) < 20
+                                ||((getRuntime()-macroTimeout)>macroTimetoTimeout)){
+                                    currentArmStep = 3;
+                                    macroTimeout=getRuntime();
+                            }
                             break;
 
                         case(3):
@@ -123,6 +145,7 @@ public class CompDrive25 extends OpMode {
                             currentArmStep = 0;
                             armMoving = false;
                             armUp = true;
+                            macroTimeout=getRuntime();
                             break;
                     }
                     break;
@@ -134,13 +157,21 @@ public class CompDrive25 extends OpMode {
                         case(0):
                             RobotComponents.pivot_motor.setTargetPosition(pivotMiddleTarget);
                             RobotComponents.pivot_motor.setPower(pivotPower);
-                            if(Math.abs(RobotComponents.pivot_motor.getTargetPosition()-RobotComponents.pivot_motor.getCurrentPosition()) < 20){currentArmStep = 1;}
+                            if(Math.abs(RobotComponents.pivot_motor.getTargetPosition()-RobotComponents.pivot_motor.getCurrentPosition()) < 20
+                                ||((getRuntime()-macroTimeout)>macroTimetoTimeout)){
+                                    currentArmStep = 1;
+                                    macroTimeout=getRuntime();
+                            }
                             break;
 
                         case(1):
                             RobotComponents.pivot_motor.setTargetPosition(pivotUpLowTarget);
                             RobotComponents.pivot_motor.setPower(pivotPower2);
-                            if(Math.abs(RobotComponents.pivot_motor.getTargetPosition()-RobotComponents.pivot_motor.getCurrentPosition()) < 20){currentArmStep = 2;}
+                            if(Math.abs(RobotComponents.pivot_motor.getTargetPosition()-RobotComponents.pivot_motor.getCurrentPosition()) < 20
+                                ||((getRuntime()-macroTimeout)>macroTimetoTimeout)){
+                                    currentArmStep = 2;
+                                    macroTimeout=getRuntime();
+                            }
                             break;
 
                         case(2):
@@ -148,7 +179,11 @@ public class CompDrive25 extends OpMode {
                             RobotComponents.right_slide_motor.setPower(extendPower);
                             RobotComponents.left_slide_motor.setTargetPosition(slideLowBasketPosition);
                             RobotComponents.right_slide_motor.setTargetPosition(slideLowBasketPosition);
-                            if(Math.abs(RobotComponents.left_slide_motor.getTargetPosition()-RobotComponents.left_slide_motor.getCurrentPosition()) < 20){currentArmStep = 3;}
+                            if(Math.abs(RobotComponents.left_slide_motor.getTargetPosition()-RobotComponents.left_slide_motor.getCurrentPosition()) < 20
+                                ||((getRuntime()-macroTimeout)>macroTimetoTimeout)){
+                                    currentArmStep = 3;
+                                    macroTimeout=getRuntime();
+                            }
                             break;
 
                         case(3):
@@ -176,14 +211,22 @@ public class CompDrive25 extends OpMode {
                             RobotComponents.right_slide_motor.setPower(extendPower);
                             RobotComponents.left_slide_motor.setTargetPosition(slideRetractedPosition);
                             RobotComponents.right_slide_motor.setTargetPosition(slideRetractedPosition);
-                            if(Math.abs(RobotComponents.left_slide_motor.getTargetPosition()-RobotComponents.left_slide_motor.getCurrentPosition()) < 20){currentArmStep = 2;}
+                            if(Math.abs(RobotComponents.left_slide_motor.getTargetPosition()-RobotComponents.left_slide_motor.getCurrentPosition()) < 20
+                                ||((getRuntime()-macroTimeout)>macroTimetoTimeout)){
+                                    currentArmStep = 2;
+                                    macroTimeout=getRuntime();
+                            }
                             break;
 
                         case(2):
                             if(isExtending){currentArmStep=3;isExtending=false;break;}
                             RobotComponents.pivot_motor.setTargetPosition(pivotMiddleTarget);
                             RobotComponents.pivot_motor.setPower(pivotPower);
-                            if(Math.abs(RobotComponents.pivot_motor.getTargetPosition()-RobotComponents.pivot_motor.getCurrentPosition()) < 20){currentArmStep = 3;}
+                            if(Math.abs(RobotComponents.pivot_motor.getTargetPosition()-RobotComponents.pivot_motor.getCurrentPosition()) < 20
+                                ||((getRuntime()-macroTimeout)>macroTimetoTimeout)){
+                                    currentArmStep = 3;
+                                    macroTimeout=getRuntime();
+                            }
                             break;
 
                         case(3):
@@ -198,6 +241,7 @@ public class CompDrive25 extends OpMode {
                     break;
             }
             }
+
             if(!basket){
                 switch(armDirection) {
                     case "High Pole":
@@ -208,13 +252,21 @@ public class CompDrive25 extends OpMode {
                             case(0):
                                 RobotComponents.pivot_motor.setTargetPosition(pivotMiddleTarget);
                                 RobotComponents.pivot_motor.setPower(pivotPower);
-                                if(Math.abs(RobotComponents.pivot_motor.getTargetPosition()-RobotComponents.pivot_motor.getCurrentPosition()) < 20){currentArmStep = 1;}
+                                if(Math.abs(RobotComponents.pivot_motor.getTargetPosition()-RobotComponents.pivot_motor.getCurrentPosition()) < 20
+                                    ||((getRuntime()-macroTimeout)>macroTimetoTimeout)){
+                                        currentArmStep = 1;
+                                        macroTimeout=getRuntime();
+                                }
                                 break;
 
                             case(1):
                                 RobotComponents.pivot_motor.setTargetPosition(pivotHighBarTarget);
                                 RobotComponents.pivot_motor.setPower(pivotPower2);
-                                if(Math.abs(RobotComponents.pivot_motor.getTargetPosition()-RobotComponents.pivot_motor.getCurrentPosition()) < 20){currentArmStep = 2;}
+                                if(Math.abs(RobotComponents.pivot_motor.getTargetPosition()-RobotComponents.pivot_motor.getCurrentPosition()) < 20
+                                    ||((getRuntime()-macroTimeout)>macroTimetoTimeout)){
+                                        currentArmStep = 2;
+                                        macroTimeout=getRuntime();
+                                }
                                 break;
 
                             case(2):
@@ -222,7 +274,11 @@ public class CompDrive25 extends OpMode {
                                 RobotComponents.right_slide_motor.setPower(extendPower);
                                 RobotComponents.left_slide_motor.setTargetPosition(slideHighBarPosition);
                                 RobotComponents.right_slide_motor.setTargetPosition(slideHighBarPosition);
-                                if(Math.abs(RobotComponents.left_slide_motor.getTargetPosition()-RobotComponents.left_slide_motor.getCurrentPosition()) < 20){currentArmStep = 3;}
+                                if(Math.abs(RobotComponents.left_slide_motor.getTargetPosition()-RobotComponents.left_slide_motor.getCurrentPosition()) < 20
+                                    || ((getRuntime()-macroTimeout)>macroTimetoTimeout)){
+                                        currentArmStep = 3;
+                                        macroTimeout=getRuntime();
+                                }
                                 break;
 
                             case(3):
@@ -241,13 +297,21 @@ public class CompDrive25 extends OpMode {
                             case(0):
                                 RobotComponents.pivot_motor.setTargetPosition(pivotMiddleTarget);
                                 RobotComponents.pivot_motor.setPower(pivotPower);
-                                if(Math.abs(RobotComponents.pivot_motor.getTargetPosition()-RobotComponents.pivot_motor.getCurrentPosition()) < 20){currentArmStep = 1;}
+                                if(Math.abs(RobotComponents.pivot_motor.getTargetPosition()-RobotComponents.pivot_motor.getCurrentPosition()) < 20
+                                    ||((getRuntime()-macroTimeout)>macroTimetoTimeout)){
+                                        currentArmStep = 1;
+                                        macroTimeout=getRuntime();
+                                }
                                 break;
 
                             case(1):
                                 RobotComponents.pivot_motor.setTargetPosition(pivotLowBarTarget);
                                 RobotComponents.pivot_motor.setPower(pivotPower2);
-                                if(Math.abs(RobotComponents.pivot_motor.getTargetPosition()-RobotComponents.pivot_motor.getCurrentPosition()) < 20){currentArmStep = 2;}
+                                if(Math.abs(RobotComponents.pivot_motor.getTargetPosition()-RobotComponents.pivot_motor.getCurrentPosition()) < 20
+                                    ||((getRuntime()-macroTimeout)>macroTimetoTimeout)){
+                                        currentArmStep = 2;
+                                        macroTimeout=getRuntime();
+                                }
                                 break;
 
                             case(2):
@@ -255,7 +319,11 @@ public class CompDrive25 extends OpMode {
                                 RobotComponents.right_slide_motor.setPower(extendPower);
                                 RobotComponents.left_slide_motor.setTargetPosition(slideLowBarPosition);
                                 RobotComponents.right_slide_motor.setTargetPosition(slideLowBarPosition);
-                                if(Math.abs(RobotComponents.left_slide_motor.getTargetPosition()-RobotComponents.left_slide_motor.getCurrentPosition()) < 20){currentArmStep = 3;}
+                                if(Math.abs(RobotComponents.left_slide_motor.getTargetPosition()-RobotComponents.left_slide_motor.getCurrentPosition()) < 20
+                                    ||((getRuntime()-macroTimeout)>macroTimetoTimeout)){
+                                        currentArmStep = 3;
+                                        macroTimeout=getRuntime();
+                                }
                                 break;
 
                             case(3):
@@ -283,14 +351,22 @@ public class CompDrive25 extends OpMode {
                                 RobotComponents.right_slide_motor.setPower(extendPower);
                                 RobotComponents.left_slide_motor.setTargetPosition(slideRetractedPosition);
                                 RobotComponents.right_slide_motor.setTargetPosition(slideRetractedPosition);
-                                if(Math.abs(RobotComponents.left_slide_motor.getTargetPosition()-RobotComponents.left_slide_motor.getCurrentPosition()) < 20){currentArmStep = 2;}
+                                if(Math.abs(RobotComponents.left_slide_motor.getTargetPosition()-RobotComponents.left_slide_motor.getCurrentPosition()) < 20
+                                    ||((getRuntime()-macroTimeout)>macroTimetoTimeout)){
+                                        currentArmStep = 2;
+                                        macroTimeout=getRuntime();
+                                }
                                 break;
 
                             case(2):
                                 if(isExtending){currentArmStep=3;isExtending=false;break;}
                                 RobotComponents.pivot_motor.setTargetPosition(pivotMiddleTarget);
                                 RobotComponents.pivot_motor.setPower(pivotPower);
-                                if(Math.abs(RobotComponents.pivot_motor.getTargetPosition()-RobotComponents.pivot_motor.getCurrentPosition()) < 20){currentArmStep = 3;}
+                                if(Math.abs(RobotComponents.pivot_motor.getTargetPosition()-RobotComponents.pivot_motor.getCurrentPosition()) < 20
+                                    ||((getRuntime()-macroTimeout)>macroTimetoTimeout)){
+                                        currentArmStep = 3;
+                                        macroTimeout=getRuntime();
+                                }
                                 break;
 
                             case(3):
@@ -305,6 +381,7 @@ public class CompDrive25 extends OpMode {
                         break;
                 }
             }
+
             telemetry.addLine();
         }
         //END OF ARM CODE
@@ -334,9 +411,11 @@ public class CompDrive25 extends OpMode {
 
         //EXTEND FOR PICKUP CODE
         if(input.y.held()){
+            isExtending = true;
             RobotComponents.pivot_motor.setTargetPosition(RobotComponents.pivot_motor.getTargetPosition()+5);
         }
         if(input.a.held()){
+            isExtending = true;
             RobotComponents.pivot_motor.setTargetPosition(RobotComponents.pivot_motor.getTargetPosition()-5);
         }
         if(input.dpad_right.held()){
@@ -376,8 +455,13 @@ public class CompDrive25 extends OpMode {
         double rx = -gamepad1.right_stick_x;
         if(armUp){
             y=y/4;
-            x=x/4;
-            rx=rx/4;
+            x=x/3;
+            rx=rx/3;
+        }
+        else if (armMoving){
+            y=y/2;
+            x=x/1.5;
+            rx=rx/1.5;
         }
 
         RobotComponents.leftFront.setPower(y + x + rx);

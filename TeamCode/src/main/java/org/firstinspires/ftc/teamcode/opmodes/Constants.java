@@ -27,6 +27,8 @@ public class Constants {
     public static double intakePower = .8;
     public static double climbServoPower = .4;
     public static double slideMotorPickupPower = extendPower / 4;
+    //timeout for each macro step (in seconds)
+    public static final double macroTimetoTimeout = 7.5;
     public static final double PIVOTTICKSPEREXTENDOTICK = (1/(Math.cos((Math.PI*312*spoolRadius*slideMotorPickupPower)/30)));
 
 }

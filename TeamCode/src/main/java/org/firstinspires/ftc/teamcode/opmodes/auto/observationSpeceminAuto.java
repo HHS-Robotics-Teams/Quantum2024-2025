@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes.auto;
 
-import static org.firstinspires.ftc.teamcode.opmodes.auto.AutoPositions.robotWidth;
 import static org.firstinspires.ftc.teamcode.opmodes.auto.AutoPositions.robotLength;
+import static org.firstinspires.ftc.teamcode.opmodes.auto.AutoPositions.robotWidth;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 @Autonomous
-public class observationParkBoth extends LinearOpMode {
+public class observationSpeceminAuto extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
