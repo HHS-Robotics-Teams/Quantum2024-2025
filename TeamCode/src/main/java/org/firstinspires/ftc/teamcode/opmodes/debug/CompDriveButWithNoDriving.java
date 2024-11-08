@@ -20,12 +20,12 @@ import static org.firstinspires.ftc.teamcode.opmodes.Constants.slideMotorPickupP
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.slideRetractedPosition;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.wristBarPosition;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.wristIntakePosition;
-import static org.firstinspires.ftc.teamcode.opmodes.Constants.wristRetractedPosition;
+import static org.firstinspires.ftc.teamcode.opmodes.Constants.wristLeftPosition;
+import static org.firstinspires.ftc.teamcode.opmodes.Constants.wristRightPosition;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.components.RobotComponents;
@@ -313,7 +313,7 @@ public class CompDriveButWithNoDriving extends OpMode {
         }
 
         if(input.right_bumper.down()) {
-            RobotComponents.wrist_servo.setPosition(wristRetractedPosition);
+            RobotComponents.wrist_servo.setPosition(wristRightPosition);
         }
 
         //EXTEND FOR PICKUP CODE

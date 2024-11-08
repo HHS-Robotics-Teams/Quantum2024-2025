@@ -12,7 +12,7 @@ import static org.firstinspires.ftc.teamcode.opmodes.Constants.slideHighBasketPo
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.slideLowBasketPosition;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.slideRetractedPosition;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.wristIntakePosition;
-import static org.firstinspires.ftc.teamcode.opmodes.Constants.wristRetractedPosition;
+import static org.firstinspires.ftc.teamcode.opmodes.Constants.wristRightPosition;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 

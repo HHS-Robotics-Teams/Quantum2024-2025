@@ -121,7 +121,7 @@ public class RobotTester extends OpMode {
 
         //DRIVETRAIN CODE for PedroPathing Mecanum drive
         turnPower = gamepad1.right_stick_x;
-        drivePower = gamepad1.left_stick_y;
+        drivePower = -gamepad1.left_stick_y;
         strafePower = gamepad1.left_stick_x;
 
 

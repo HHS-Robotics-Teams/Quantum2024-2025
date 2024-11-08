@@ -16,8 +16,8 @@ public class observationParkBoth extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
-        Trajectory goRight = drive.trajectoryBuilder(new Pose2d((-(robotWidth/2)),(72-(robotLength)/2)))
-                .lineTo(new Vector2d((-70+(robotWidth/2)),(72-(robotLength/2)-1)))
+        Trajectory goRight = drive.trajectoryBuilder(new Pose2d(0,0))
+                .strafeRight(52)
                 .build();
         waitForStart();
         if(isStopRequested())return;

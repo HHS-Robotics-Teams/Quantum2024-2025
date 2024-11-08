@@ -7,6 +7,7 @@ import static org.firstinspires.ftc.teamcode.opmodes.Constants.macroTimetoTimeou
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.pivotDownPosition;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.pivotHighBarTarget;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.pivotLowBarTarget;
+import static org.firstinspires.ftc.teamcode.opmodes.Constants.pivotMaxTeleOp;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.pivotMiddleTarget;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.pivotPower;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.pivotPower2;
@@ -16,6 +17,7 @@ import static org.firstinspires.ftc.teamcode.opmodes.Constants.slideHighBarPosit
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.slideHighBasketPosition;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.slideLowBarPosition;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.slideLowBasketPosition;
+import static org.firstinspires.ftc.teamcode.opmodes.Constants.slideMaxExtensionTeleOp;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.slideMotorPickupPower;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.slideRetractedPosition;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.wristBarPosition;
@@ -28,6 +30,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.components.RobotComponents;
 import org.firstinspires.ftc.teamcode.excutil.Input;
+import org.firstinspires.ftc.teamcode.opmodes.Constants;
 
 @TeleOp(group = "A most important group", name = "Competition Drive")
 public class CompDrive25 extends OpMode {
@@ -402,31 +405,31 @@ public class CompDrive25 extends OpMode {
 
         //Wrist Code
         if(input.left_bumper.down()) {
-            RobotComponents.wrist_servo.setPosition(RobotComponents.wrist_servo.getPosition()-.05);
+            RobotComponents.wrist_servo.setPosition(RobotComponents.wrist_servo.getPosition() - .25);
         }
 
         if(input.right_bumper.down()) {
-            RobotComponents.wrist_servo.setPosition(RobotComponents.wrist_servo.getPosition()+.05);
+            RobotComponents.wrist_servo.setPosition(RobotComponents.wrist_servo.getPosition() + .25);
         }
 
         //EXTEND FOR PICKUP CODE
-        if(input.y.held()){
+        if(input.y.held()&&RobotComponents.pivot_motor.getCurrentPosition() < pivotMaxTeleOp){
             isExtending = true;
             RobotComponents.pivot_motor.setTargetPosition(RobotComponents.pivot_motor.getTargetPosition()+5);
         }
-        if(input.a.held()){
+        if(input.a.held()&&RobotComponents.pivot_motor.getCurrentPosition() > 5){
             isExtending = true;
             RobotComponents.pivot_motor.setTargetPosition(RobotComponents.pivot_motor.getTargetPosition()-5);
         }
-        if(input.dpad_right.held()){
+        if(input.dpad_right.held()&&RobotComponents.left_slide_motor.getCurrentPosition() < slideMaxExtensionTeleOp) {
             isExtending = true;
             RobotComponents.right_slide_motor.setTargetPosition(RobotComponents.right_slide_motor.getTargetPosition() + 15);
             RobotComponents.left_slide_motor.setTargetPosition(RobotComponents.left_slide_motor.getTargetPosition() + 15);
         }
-        if(input.dpad_left.down()) {
+        if(input.dpad_left.down()&&RobotComponents.left_slide_motor.getCurrentPosition() > slideRetractedPosition) {
             isExtending = false;
-            RobotComponents.left_slide_motor.setTargetPosition(slideRetractedPosition);
-            RobotComponents.right_slide_motor.setTargetPosition(slideRetractedPosition);
+            RobotComponents.left_slide_motor.setTargetPosition(RobotComponents.right_slide_motor.getTargetPosition() - 15);
+            RobotComponents.right_slide_motor.setTargetPosition(RobotComponents.left_slide_motor.getTargetPosition() - 15);
         }
         //END OF i absolutely hate this naming convention
 
@@ -450,7 +453,7 @@ public class CompDrive25 extends OpMode {
         //END OF CLIMB CODE
 
         //DRIVETRAIN CODE
-        double y = -gamepad1.left_stick_y; // Remember, Y stick is reversed!
+        double y = -gamepad1.left_stick_y;
         double x = gamepad1.left_stick_x;
         double rx = -gamepad1.right_stick_x;
         if(armUp){

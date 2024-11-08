@@ -48,24 +48,37 @@ public class basketPath extends OpMode {
     private boolean wristMoved = false;
     public int currentStep = 0;
     private int armStep = 0;
+    public double startTime = 0;
     private double wristWaitTime;
     private double outtakeTime;
     @Override
     public void init() {
+        RobotComponents.init(hardwareMap);
         drive = new SampleMecanumDrive(hardwareMap);
         buildPaths();
+        startTime = getRuntime();
     }
+
+    /*@Override
+    public void start() {
+        RobotComponents.pivot_motor.setTargetPosition(pivotDownPosition);
+        RobotComponents.wrist_servo.setPosition(teleOpWristStartPos);
+    }*/
 
     @Override
     public void loop() {
         telemetry.addData("Current Step:", currentStep);
         telemetry.addData("Current Arm Step", armStep);
         telemetry.addLine();
+        if(currentStep == 0){
+            RobotComponents.pivot_motor.setTargetPosition(pivotDownPosition);
+            RobotComponents.wrist_servo.setPosition(teleOpWristStartPos);
+        }
         RobotComponents.pivot_motor.setPower(.5);
         switch (currentStep){
             case(0):
                 drive.followTrajectory(toBasket);
-                if(!drive.isBusy()){currentStep++;}
+                if(!drive.isBusy()&&getRuntime() - startTime > 50){currentStep++;}
                 break;
             case(1):
                 if(armDone){
@@ -150,7 +163,7 @@ public class basketPath extends OpMode {
 
     public void buildPaths() {
         toBasket = drive.trajectoryBuilder(startPos,Math.toRadians(180))
-                .splineToLinearHeading(basketPos,Math.toRadians(45))
+                .lineToLinearHeading(basketPos)
                 .build();
 
         pickupSequenceOne = drive.trajectorySequenceBuilder(basketPos)
