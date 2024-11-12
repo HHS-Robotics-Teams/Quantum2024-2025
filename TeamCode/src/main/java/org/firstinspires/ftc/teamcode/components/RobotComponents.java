@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.components;
 
+import androidx.annotation.NonNull;
+
 import com.qualcomm.ftccommon.SoundPlayer;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -16,6 +18,7 @@ import org.firstinspires.ftc.teamcode.excutil.RMath;
 import org.firstinspires.ftc.teamcode.excutil.coroutines.CoroutineManager;
 import org.firstinspires.ftc.teamcode.excutil.liveconfig.LiveSettings;
 import org.firstinspires.ftc.teamcode.macros.MacroSequence;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -170,4 +173,18 @@ public class RobotComponents {
         //return val;
         //return (val > -deadZoneThreshold && val < deadZoneThreshold) ? 0 : val;
     }
+
+    // Returns true if the current motor position is
+    // within the margin of error from the target otherwise
+    // returns false
+    public static boolean isDone(DcMotor motor, double margin){
+        if(Math.abs(motor.getCurrentPosition() - motor.getTargetPosition()) <= margin)
+        {
+            return true;
+        } else {
+            return false;
+        }
+
+    }
+
 }

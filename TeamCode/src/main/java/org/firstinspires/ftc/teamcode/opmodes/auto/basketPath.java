@@ -9,7 +9,7 @@ import static org.firstinspires.ftc.teamcode.opmodes.Constants.pivotPower2;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.pivotUpHighTarget;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.slideHighBasketPosition;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.slideRetractedPosition;
-import static org.firstinspires.ftc.teamcode.opmodes.Constants.wristIntakePosition;
+import static org.firstinspires.ftc.teamcode.opmodes.Constants.wristMiddlePosition;
 import static org.firstinspires.ftc.teamcode.opmodes.auto.AutoPositions.autoPivotIntakePos;
 import static org.firstinspires.ftc.teamcode.opmodes.auto.AutoPositions.intakeTime;
 import static org.firstinspires.ftc.teamcode.opmodes.auto.AutoPositions.robotLength;
@@ -244,7 +244,7 @@ public class basketPath extends OpMode {
                 break;
 
             case(3):
-                RobotComponents.wrist_servo.setPosition(wristIntakePosition);
+                RobotComponents.wrist_servo.setPosition(wristMiddlePosition);
                 armStep = 4;
                 wristWaitTime = getRuntime();
                 break;
@@ -270,7 +270,7 @@ public class basketPath extends OpMode {
         switch (armStep){
             case(0):
                 RobotComponents.intakeouttake_servo.setPower(0);
-                RobotComponents.wrist_servo.setPosition(wristIntakePosition);
+                RobotComponents.wrist_servo.setPosition(wristMiddlePosition);
                 armStep = 1;
                 break;
 

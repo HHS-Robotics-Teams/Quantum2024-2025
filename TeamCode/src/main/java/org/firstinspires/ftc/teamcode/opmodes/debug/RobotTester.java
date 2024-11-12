@@ -119,16 +119,8 @@ public class RobotTester extends OpMode {
         }
         //END OF CLIMB CODE
 
-        //DRIVETRAIN CODE for PedroPathing Mecanum drive
-        turnPower = gamepad1.right_stick_x;
-        drivePower = -gamepad1.left_stick_y;
-        strafePower = gamepad1.left_stick_x;
 
 
-        RobotComponents.leftFront.setPower(drivePower + strafePower + turnPower);
-        RobotComponents.rightFront.setPower(drivePower - strafePower - turnPower);
-        RobotComponents.leftRear.setPower(drivePower - strafePower + turnPower);
-        RobotComponents.rightRear.setPower(drivePower + strafePower - turnPower);
         //END OF DRIVETRAIN CODE
         RobotComponents.pivot_motor.setPower(pivotPower);
         RobotComponents.left_slide_motor.setPower(slidePower);

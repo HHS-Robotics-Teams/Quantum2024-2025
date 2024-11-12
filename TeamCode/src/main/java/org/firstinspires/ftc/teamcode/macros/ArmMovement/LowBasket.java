@@ -10,10 +10,6 @@ import static org.firstinspires.ftc.teamcode.opmodes.Constants.pivotPower2;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.pivotUpHighTarget;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.slideHighBasketPosition;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.slideLowBasketPosition;
-import static org.firstinspires.ftc.teamcode.opmodes.Constants.slideRetractedPosition;
-import static org.firstinspires.ftc.teamcode.opmodes.Constants.wristIntakePosition;
-import static org.firstinspires.ftc.teamcode.opmodes.Constants.wristRightPosition;
-
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.components.RobotComponents;
