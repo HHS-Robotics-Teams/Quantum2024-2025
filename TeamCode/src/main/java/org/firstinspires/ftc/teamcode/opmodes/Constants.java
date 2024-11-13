@@ -27,7 +27,7 @@ public class Constants {
     public static final int pivotUpHighAUTOTarget = 1100;
     public static final int pivotMiddleTarget = 800;
     public static final int pivotUpLowTarget = 1050;
-    public static final int pivotDownPosition = 200;
+    public static final int pivotDownPosition = 300;
     public static final int slideLowBasketPosition = 1450;
     public static final int slideHighBasketPosition = 2400;
     public static final int slideMaxExtensionTeleOp = 2725;
