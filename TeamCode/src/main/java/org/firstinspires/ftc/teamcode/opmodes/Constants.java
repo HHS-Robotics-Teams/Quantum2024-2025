@@ -23,33 +23,29 @@ public class Constants {
     public static final int pivotUpHighTarget = 1233;
     public static final double pivotMargin = 50;
     public static final double slideMargin = 50;
-    //TODO TUNE AUTO
-    public static final int pivotUpHighAUTOTarget = 1100;
     public static final int pivotMiddleTarget = 800;
     public static final int pivotUpLowTarget = 1050;
     public static final int pivotDownPosition = 300;
     public static final int slideLowBasketPosition = 1450;
     public static final int slideHighBasketPosition = 2400;
     public static final int slideMaxExtensionTeleOp = 2725;
-    public static final int slideHighBasketAUTOPosition = 2500;
     public static final int slideRetractedPosition = 5;
     public static final int pivotHighBarTarget = 1050;
     public static final int pivotLowBarTarget = 750;
-    public static final int pivotMaxTeleOp = 5;
     public static final int slideHighBarPosition = 1400;
     public static final int slideLowBarPosition = 1400;
     public static final double wristBarPosition = 1;
-    public static double wristRightPosition = 1;
     public static double wristMiddlePosition = .5;
     public static double wristLeftPosition = 0;
     public static final double pivotPower = .8;
     public static final double pivotPower2 = .6;
-    public static final double PIVOTPOWERDOWN = .2;
+    public static final double pivotIdle = .4;
     public static final double extendPower = .8;
+    public static final double slideIdle = .2;
     public static double intakePower = .8;
     public static double climbServoPower = .4;
-    public static double slideMotorPickupPower = extendPower / 4;
+    public static double slideMotorPickupPower = .75;
     //timeout for each macro step (in seconds)
-    public static final double macroTimetoTimeout = 7;
+    public static final double macroTimetoTimeout = 10;
 
 }

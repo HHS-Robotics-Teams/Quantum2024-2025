@@ -27,6 +27,7 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.sequencesegment.WaitSeg
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.BooleanSupplier;
 
 public class TrajectorySequenceBuilder {
     private final double resolution = 0.25;
@@ -461,6 +462,17 @@ public class TrajectorySequenceBuilder {
         sequenceSegments.add(new WaitSegment(lastPose, seconds, Collections.emptyList()));
 
         currentDuration += seconds;
+        return this;
+    }
+
+    public TrajectorySequenceBuilder waitUntil(BooleanSupplier truthTest) {
+        return waitUntil(truthTest, 10.0);
+    }
+
+    public TrajectorySequenceBuilder waitUntil(BooleanSupplier truthTest, double secondsTimeout) {
+        pushPath();
+
+        currentDuration += secondsTimeout;
         return this;
     }
 

@@ -46,8 +46,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceBuilder;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceRunner;
-import org.firstinspires.ftc.teamcode.util.AxisDirection;
-import org.firstinspires.ftc.teamcode.util.BNO055IMUUtil;
 import org.firstinspires.ftc.teamcode.util.LynxModuleUtil;
 
 import java.util.ArrayList;
@@ -59,26 +57,26 @@ import java.util.List;
  */
 @Config
 public class SampleMecanumDrive extends MecanumDrive {
-    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(8, 0, 0);
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(8, 0, 0);
+    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(4, 0, 0);
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(4, 0, 0);
 
     public static double LATERAL_MULTIPLIER = 1;
-
-    private TrajectorySequenceRunner trajectorySequenceRunner;
 
     public static double VX_WEIGHT = 1;
     public static double VY_WEIGHT = 1;
     public static double OMEGA_WEIGHT = 1;
+
+    private TrajectorySequenceRunner trajectorySequenceRunner;
 
     private static final TrajectoryVelocityConstraint VEL_CONSTRAINT = getVelocityConstraint(MAX_VEL, MAX_ANG_VEL, TRACK_WIDTH);
     private static final TrajectoryAccelerationConstraint ACCEL_CONSTRAINT = getAccelerationConstraint(MAX_ACCEL);
 
     private TrajectoryFollower follower;
 
-    private DcMotorEx leftFront = null;
-    private DcMotorEx rightFront = null;
-    private DcMotorEx leftRear = null;
-    private DcMotorEx rightRear = null;
+    private DcMotorEx front_left = null;
+    private DcMotorEx front_right = null;
+    private DcMotorEx back_left = null;
+    private DcMotorEx back_right = null;
     private List<DcMotorEx> motors;
 
     public static double MULTIPLIER = 1.0;
@@ -94,7 +92,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
 
         follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
-                new Pose2d(0.00001, 0.00001, Math.toRadians(0.00001)), 30);
+                new Pose2d(0.1, 0.1, Math.toRadians(1)), .25);
 
         LynxModuleUtil.ensureMinimumFirmwareVersion(hardwareMap);
 
@@ -108,11 +106,9 @@ public class SampleMecanumDrive extends MecanumDrive {
         imu = hardwareMap.get(BHI260IMU.class, "imu");
         // TODO check
         BHI260IMU.Parameters parameters = new BHI260IMU.Parameters(
-                new RevHubOrientationOnRobot(
-                        RevHubOrientationOnRobot.LogoFacingDirection.DOWN,
-                        RevHubOrientationOnRobot.UsbFacingDirection.RIGHT)
+                new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
+                        RevHubOrientationOnRobot.UsbFacingDirection.DOWN)
         );
-
         imu.initialize(parameters);
 
         // TODO: If the hub containing the IMU you are using is mounted so that the "REV" logo does
@@ -135,14 +131,14 @@ public class SampleMecanumDrive extends MecanumDrive {
         // and the placement of the dot/orientation from https://docs.revrobotics.com/rev-control-system/control-system-overview/dimensions#imu-location
         //
         // For example, if +Y in this diagram faces downwards, you would use AxisDirection.NEG_Y.
-        //BNO055IMUUtil.remapZAxis(imu, AxisDirection.NEG_Z);
+        // BNO055IMUUtil.remapZAxis(imu, AxisDirection.NEG_Y);
 
-        leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
-        rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
-        leftRear = hardwareMap.get(DcMotorEx.class, "leftRear");
-        rightRear = hardwareMap.get(DcMotorEx.class, "rightRear");
+        front_left = hardwareMap.get(DcMotorEx.class, "leftFront");
+        front_right = hardwareMap.get(DcMotorEx.class, "rightFront");
+        back_left = hardwareMap.get(DcMotorEx.class, "leftRear");
+        back_right = hardwareMap.get(DcMotorEx.class, "rightRear");
 
-        motors = Arrays.asList(leftFront, leftRear, rightFront, rightRear);
+        motors = Arrays.asList(front_left, back_left, front_right, back_right);
 
         for (DcMotorEx motor : motors) {
             MotorConfigurationType motorConfigurationType = motor.getMotorType().clone();
@@ -163,8 +159,11 @@ public class SampleMecanumDrive extends MecanumDrive {
 
         // TODO: reverse any motors using DcMotor.setDirection()
 
-        leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
-        leftRear.setDirection(DcMotorSimple.Direction.REVERSE);
+        back_right.setDirection(DcMotorSimple.Direction.FORWARD);
+        front_right.setDirection(DcMotorSimple.Direction.FORWARD);
+        back_left.setDirection(DcMotorSimple.Direction.REVERSE);
+        front_left.setDirection(DcMotorSimple.Direction.REVERSE);
+
 
         //front_left.setPower(1);
         //back_left.setPower(0.7);
@@ -316,10 +315,10 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     @Override
     public void setMotorPowers(double v, double v1, double v2, double v3) {
-        leftFront.setPower(v * wheelMultipliers[0]);
-        leftRear.setPower(v1 * wheelMultipliers[2]);
-        rightRear.setPower(v2 * wheelMultipliers[3]);
-        rightFront.setPower(v3 * wheelMultipliers[1]);
+        front_left.setPower(v * wheelMultipliers[0]);
+        back_left.setPower(v1 * wheelMultipliers[2]);
+        back_right.setPower(v2 * wheelMultipliers[3]);
+        front_right.setPower(v3 * wheelMultipliers[1]);
     }
 
     public void setWheelMultipliers(float[] mults) {
