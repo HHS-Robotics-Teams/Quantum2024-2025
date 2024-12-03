@@ -132,15 +132,13 @@ public class CompDrive25 extends OpMode {
             intakeouttake_servo.setPower(0);
         }
 
-        //ARM LOGIC
-        if(armMoving && !macrosDisabled){
+        //ARM
+        if(isRetracting){
+            armRetract();
+        } else if(armMoving && !macrosDisabled){
 
             telemetry.addLine("Arm is moving");
             telemetry.addData("Arm Step: ", currentArmStep);
-
-            if(isRetracting){
-                armRetract();
-            } else {
 
                 if (basket) {
 
@@ -170,7 +168,7 @@ public class CompDrive25 extends OpMode {
 
                 }
 
-            }
+
 
         }
 
@@ -455,9 +453,6 @@ public class CompDrive25 extends OpMode {
         switch (currentArmStep){
             case(0):
                 wrist_servo.setPosition(wristMiddlePosition);
-                currentArmStep++;
-                break;
-            case(1):
                 left_slide_motor.setTargetPosition(slideRetractedPosition);
                 right_slide_motor.setTargetPosition(slideRetractedPosition);
                 left_slide_motor.setPower(extendPower);
@@ -466,7 +461,7 @@ public class CompDrive25 extends OpMode {
                     currentArmStep++;
                 }
                 break;
-            case(2):
+            case(1):
                 if(pivot_motor.getCurrentPosition() < pivotMiddleTarget){
                     currentArmStep++;
                     break;
@@ -477,7 +472,7 @@ public class CompDrive25 extends OpMode {
                     currentArmStep++;
                 }
                 break;
-            case(3):
+            case(2):
                 pivot_motor.setTargetPosition(pivotDownPosition);
                 pivot_motor.setPower(pivotPower2);
                 if(isDone(pivot_motor,pivotMargin*2)){
