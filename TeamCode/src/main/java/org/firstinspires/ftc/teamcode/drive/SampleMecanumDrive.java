@@ -60,7 +60,7 @@ public class SampleMecanumDrive extends MecanumDrive {
     public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(4, 0, 0);
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(4, 0, 0);
 
-    public static double LATERAL_MULTIPLIER = 1;
+    public static double LATERAL_MULTIPLIER = 1.00000611115;
 
     public static double VX_WEIGHT = 1;
     public static double VY_WEIGHT = 1;
@@ -133,10 +133,10 @@ public class SampleMecanumDrive extends MecanumDrive {
         // For example, if +Y in this diagram faces downwards, you would use AxisDirection.NEG_Y.
         // BNO055IMUUtil.remapZAxis(imu, AxisDirection.NEG_Y);
 
-        front_left = hardwareMap.get(DcMotorEx.class, "leftFront");
-        front_right = hardwareMap.get(DcMotorEx.class, "rightFront");
-        back_left = hardwareMap.get(DcMotorEx.class, "leftRear");
-        back_right = hardwareMap.get(DcMotorEx.class, "rightRear");
+        front_left = hardwareMap.get(DcMotorEx.class, "rightRear");
+        front_right = hardwareMap.get(DcMotorEx.class, "leftRear");
+        back_left = hardwareMap.get(DcMotorEx.class, "rightFront");
+        back_right = hardwareMap.get(DcMotorEx.class, "leftFront");
 
         motors = Arrays.asList(front_left, back_left, front_right, back_right);
 
@@ -159,10 +159,10 @@ public class SampleMecanumDrive extends MecanumDrive {
 
         // TODO: reverse any motors using DcMotor.setDirection()
 
-        back_right.setDirection(DcMotorSimple.Direction.FORWARD);
-        front_right.setDirection(DcMotorSimple.Direction.FORWARD);
-        back_left.setDirection(DcMotorSimple.Direction.REVERSE);
-        front_left.setDirection(DcMotorSimple.Direction.REVERSE);
+        back_right.setDirection(DcMotorSimple.Direction.REVERSE);
+        front_right.setDirection(DcMotorSimple.Direction.REVERSE);
+        back_left.setDirection(DcMotorSimple.Direction.FORWARD);
+        front_left.setDirection(DcMotorSimple.Direction.FORWARD);
 
 
         //front_left.setPower(1);

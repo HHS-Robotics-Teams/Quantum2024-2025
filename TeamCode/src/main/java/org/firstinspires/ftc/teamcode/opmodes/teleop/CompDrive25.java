@@ -13,14 +13,14 @@ import static org.firstinspires.ftc.teamcode.components.RobotComponents.right_cl
 import static org.firstinspires.ftc.teamcode.components.RobotComponents.right_slide_motor;
 import static org.firstinspires.ftc.teamcode.components.RobotComponents.wrist_servo;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.armMoving;
-import static org.firstinspires.ftc.teamcode.opmodes.Constants.extendPower;
-import static org.firstinspires.ftc.teamcode.opmodes.Constants.extendoPivotAmount;
-import static org.firstinspires.ftc.teamcode.opmodes.Constants.isRetracting;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.armUp;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.basket;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.climbServoPower;
+import static org.firstinspires.ftc.teamcode.opmodes.Constants.extendPower;
+import static org.firstinspires.ftc.teamcode.opmodes.Constants.extendoPivotAmount;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.intakePower;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.isExtending;
+import static org.firstinspires.ftc.teamcode.opmodes.Constants.isRetracting;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.macroTimetoTimeout;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.macrosDisabled;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.overlyLargeNumber;
@@ -42,9 +42,9 @@ import static org.firstinspires.ftc.teamcode.opmodes.Constants.slideMargin;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.slideMaxExtensionTeleOp;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.slideMotorPickupPower;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.slideRetractedPosition;
+import static org.firstinspires.ftc.teamcode.opmodes.Constants.wristBarPosition;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.wristLeftPosition;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.wristMiddlePosition;
-import static org.firstinspires.ftc.teamcode.components.PivotTicksPerExtendoTickCalculations.pivotCounter;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -135,7 +135,9 @@ public class CompDrive25 extends OpMode {
         //ARM
         if(isRetracting){
             armRetract();
-        } else if(armMoving && !macrosDisabled){
+        }
+
+        else if(armMoving && !macrosDisabled){
 
             telemetry.addLine("Arm is moving");
             telemetry.addData("Arm Step: ", currentArmStep);
@@ -292,36 +294,28 @@ public class CompDrive25 extends OpMode {
         switch (currentArmStep) {
 
             case (0):
-                pivot_motor.setTargetPosition(pivotMiddleTarget);
+                left_slide_motor.setTargetPosition(slideRetractedPosition);
+                right_slide_motor.setTargetPosition(slideRetractedPosition);
+                left_slide_motor.setPower(extendPower);
+                right_slide_motor.setPower(extendPower);
+                pivot_motor.setTargetPosition(pivotUpHighTarget);
                 pivot_motor.setPower(pivotPower);
-                if (RobotComponents.isDone(pivot_motor, pivotMargin)) {
+                if (RobotComponents.isDone(pivot_motor, pivotMargin)&&RobotComponents.isDone(left_slide_motor, slideMargin)) {
                     currentArmStep = 1;
                 }
                 break;
 
             case (1):
-                pivot_motor.setTargetPosition(pivotUpHighTarget);
-                pivot_motor.setPower(pivotPower2);
-                if (RobotComponents.isDone(pivot_motor, pivotMargin)) {
-                    currentArmStep = 2;
-                }
-                break;
-
-            case (2):
+                wrist_servo.setPosition(wristMiddlePosition);
                 left_slide_motor.setPower(extendPower);
                 right_slide_motor.setPower(extendPower);
                 left_slide_motor.setTargetPosition(slideHighBasketPosition);
                 right_slide_motor.setTargetPosition(slideHighBasketPosition);
                 if (RobotComponents.isDone(left_slide_motor, slideMargin)) {
-                    currentArmStep = 3;
+                    currentArmStep = 0;
+                    armMoving = false;
+                    armUp = true;
                 }
-                break;
-
-            case (3):
-                wrist_servo.setPosition(wristMiddlePosition);
-                currentArmStep = 0;
-                armMoving = false;
-                armUp = true;
                 break;
         }
 
@@ -332,36 +326,42 @@ public class CompDrive25 extends OpMode {
         switch (currentArmStep) {
 
             case (0):
+                //checks if the pivot is already pivoted, if yes it
+                //goes to the next step, otherwise runs the intermediate step
+                if(pivot_motor.getCurrentPosition() - pivotUpHighTarget > - 250 ) {
+                    currentArmStep = 1;
+                    break;
+                }
+                left_slide_motor.setTargetPosition(slideRetractedPosition);
+                right_slide_motor.setTargetPosition(slideRetractedPosition);
+                left_slide_motor.setPower(extendPower);
+                right_slide_motor.setPower(extendPower);
                 pivot_motor.setTargetPosition(pivotMiddleTarget);
-                pivot_motor.setPower(pivotPower);
-                if (RobotComponents.isDone(pivot_motor, pivotMargin)) {
+                pivot_motor.setPower(pivotPower2);
+                if (RobotComponents.isDone(pivot_motor, pivotMargin)&&RobotComponents.isDone(left_slide_motor, slideMargin)) {
                     currentArmStep = 1;
                 }
                 break;
 
             case (1):
                 pivot_motor.setTargetPosition(pivotUpLowTarget);
-                pivot_motor.setPower(pivotPower2);
+                pivot_motor.setPower(pivotPower);
                 if (RobotComponents.isDone(pivot_motor, pivotMargin)) {
                     currentArmStep = 2;
                 }
                 break;
 
             case (2):
+                wrist_servo.setPosition(wristMiddlePosition);
                 left_slide_motor.setPower(extendPower);
                 right_slide_motor.setPower(extendPower);
                 left_slide_motor.setTargetPosition(slideLowBasketPosition);
                 right_slide_motor.setTargetPosition(slideLowBasketPosition);
                 if (RobotComponents.isDone(left_slide_motor, slideMargin)) {
-                    currentArmStep = 3;
+                    currentArmStep = 0;
+                    armMoving = false;
+                    armUp = true;
                 }
-                break;
-
-            case (3):
-                wrist_servo.setPosition(wristMiddlePosition);
-                currentArmStep = 0;
-                armMoving = false;
-                armUp = true;
                 break;
         }
 
@@ -372,10 +372,11 @@ public class CompDrive25 extends OpMode {
         switch (currentArmStep) {
 
             case (0):
-                pivot_motor.setTargetPosition(pivotMiddleTarget);
-                pivot_motor.setPower(pivotPower);
-                if (RobotComponents.isDone(pivot_motor, pivotMargin)) {
-                    currentArmStep = 1;
+                if(left_slide_motor.getCurrentPosition() > slideMargin){
+                    left_slide_motor.setTargetPosition(slideRetractedPosition);
+                    right_slide_motor.setTargetPosition(slideRetractedPosition);
+                } else {
+                    currentArmStep++;
                 }
                 break;
 
@@ -388,11 +389,7 @@ public class CompDrive25 extends OpMode {
                 break;
 
             case (2):
-                wrist_servo.setPosition(wristLeftPosition);
-                currentArmStep = 3;
-                break;
-
-            case (3):
+                wrist_servo.setPosition(wristBarPosition);
                 left_slide_motor.setPower(extendPower);
                 right_slide_motor.setPower(extendPower);
                 left_slide_motor.setTargetPosition(slideHighBarPosition);
@@ -429,11 +426,7 @@ public class CompDrive25 extends OpMode {
                 break;
 
             case (2):
-                wrist_servo.setPosition(wristLeftPosition);
-                currentArmStep = 3;
-                break;
-
-            case (3):
+                wrist_servo.setPosition(wristBarPosition);
                 left_slide_motor.setPower(extendPower);
                 right_slide_motor.setPower(extendPower);
                 left_slide_motor.setTargetPosition(slideLowBarPosition);

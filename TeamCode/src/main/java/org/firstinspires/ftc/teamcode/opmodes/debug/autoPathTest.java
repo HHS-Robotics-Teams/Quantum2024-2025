@@ -1,31 +1,28 @@
-package org.firstinspires.ftc.teamcode.opmodes.auto;
+package org.firstinspires.ftc.teamcode.opmodes.debug;
 
 import static org.firstinspires.ftc.teamcode.components.RobotComponents.left_slide_motor;
 import static org.firstinspires.ftc.teamcode.components.RobotComponents.pivot_motor;
 import static org.firstinspires.ftc.teamcode.components.RobotComponents.right_slide_motor;
 import static org.firstinspires.ftc.teamcode.components.RobotComponents.wrist_servo;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.extendPower;
-import static org.firstinspires.ftc.teamcode.opmodes.Constants.pivotHighBarScore;
-import static org.firstinspires.ftc.teamcode.opmodes.Constants.pivotHighBarTarget;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.pivotMiddleTarget;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.pivotPower;
-import static org.firstinspires.ftc.teamcode.opmodes.Constants.slideHighBarPosition;
-import static org.firstinspires.ftc.teamcode.opmodes.Constants.slideHighBarScorePosition;
-import static org.firstinspires.ftc.teamcode.opmodes.Constants.slideRetractedPosition;
-import static org.firstinspires.ftc.teamcode.opmodes.Constants.wristBarPosition;
-import static org.firstinspires.ftc.teamcode.opmodes.Constants.wristLeftPosition;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.wristMiddlePosition;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.components.RobotComponents;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
+@Disabled
+@Config
 @Autonomous
-public class observationSpeceminAuto extends LinearOpMode {
+public class autoPathTest extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -47,42 +44,19 @@ public class observationSpeceminAuto extends LinearOpMode {
         drive.setPoseEstimate(startPose);
 
         TrajectorySequence forwardTrajectory = drive.trajectorySequenceBuilder(startPose)
-                .addDisplacementMarker(() -> {
-                    wrist_servo.setPosition(wristBarPosition);
-                    left_slide_motor.setTargetPosition(slideHighBarPosition);
-                    right_slide_motor.setTargetPosition(slideHighBarPosition);
-                    pivot_motor.setTargetPosition(pivotHighBarTarget);
-                })
-                .turn(Math.toRadians(18))
-                .forward(24)
-                .turn(Math.toRadians(-10))
-                .forward(4)
-                .addDisplacementMarker( () -> {
-                    pivot_motor.setTargetPosition(pivotHighBarScore);
-                    left_slide_motor.setTargetPosition(slideHighBarScorePosition);
-                    right_slide_motor.setTargetPosition(slideHighBarScorePosition);
-                })
+                .forward(32)
+                .strafeRight(4)
+                .turn(Math.toRadians(22))
                 .waitSeconds(1)
-                .addDisplacementMarker(() -> {
-                    left_slide_motor.setTargetPosition(slideRetractedPosition);
-                    right_slide_motor.setTargetPosition(slideRetractedPosition);
-                })
-                .back(22)
-                .waitSeconds(.5)
-                .turn(Math.toRadians(80))
-                .back(40)
+                .back(2)
                 .waitSeconds(.2)
-                .turn(Math.toRadians(2))
-
-
-        //end reset to start pos
-                .addDisplacementMarker(() -> {
-                    wrist_servo.setPosition(wristLeftPosition);
-                    pivot_motor.setTargetPosition(0);
-                    left_slide_motor.setTargetPosition(0);
-                    right_slide_motor.setTargetPosition(0);
-                })
-
+                //done above
+                .turn(Math.toRadians(80))
+                .waitSeconds(.2)
+                .forward(32)
+                .waitSeconds(.2)
+                .strafeRight(13)
+                //cash --------------------
                 .build();
 
         waitForStart();
