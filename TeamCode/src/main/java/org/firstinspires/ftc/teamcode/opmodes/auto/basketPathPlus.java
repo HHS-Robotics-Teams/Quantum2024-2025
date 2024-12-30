@@ -14,15 +14,21 @@ import static org.firstinspires.ftc.teamcode.opmodes.Constants.outtakeDuration;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.pivotDownPosition;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.pivotHighBarScore;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.pivotHighBarTarget;
+import static org.firstinspires.ftc.teamcode.opmodes.Constants.pivotIntakePosition;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.pivotMargin;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.pivotPower2;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.slideHighBarPosition;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.slideHighBarScorePosition;
+import static org.firstinspires.ftc.teamcode.opmodes.Constants.slideIntakePosition;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.wristBarPosition;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.wristMiddlePosition;
 import static org.firstinspires.ftc.teamcode.opmodes.auto.autoutil.paths.basketChamberScore;
+import static org.firstinspires.ftc.teamcode.opmodes.auto.autoutil.paths.basketScorePose;
+import static org.firstinspires.ftc.teamcode.opmodes.auto.autoutil.paths.chamberBasketVector;
 import static org.firstinspires.ftc.teamcode.opmodes.auto.autoutil.paths.chamberToSamplePickup;
 import static org.firstinspires.ftc.teamcode.opmodes.auto.autoutil.paths.pickupTwo;
+import static org.firstinspires.ftc.teamcode.opmodes.auto.autoutil.paths.spikemarkPickupOne;
+import static org.firstinspires.ftc.teamcode.opmodes.auto.autoutil.paths.spikemarkPickupTwo;
 import static org.firstinspires.ftc.teamcode.opmodes.auto.autoutil.paths.startPose;
 import static org.firstinspires.ftc.teamcode.opmodes.auto.autoutil.paths.toChamberBasket;
 import static org.firstinspires.ftc.teamcode.opmodes.teleop.CompDrive25.armGoUpHighBasket;
@@ -51,7 +57,7 @@ public class basketPathPlus extends OpMode {
             resetEncoders();
             drive = new SampleMecanumDrive(hardwareMap);
             drive.setPoseEstimate(startPose);
-            paths.buildPaths(drive);
+            buildPaths(drive);
         }
 
         @Override
@@ -180,5 +186,56 @@ public class basketPathPlus extends OpMode {
                 armUp = true;
                 break;
         }
+    }
+     void buildPaths(SampleMecanumDrive drive) {
+
+        toChamberBasket = drive.trajectorySequenceBuilder(startPose)
+                .lineToConstantHeading(chamberBasketVector)
+                .build();
+
+        basketChamberScore = drive.trajectorySequenceBuilder(toChamberBasket.end())
+                .back(5)
+                .build();
+
+        chamberToSamplePickup = drive.trajectorySequenceBuilder(basketChamberScore.end())
+                .addDisplacementMarker(20, () -> {
+                    pivot_motor.setTargetPosition(pivotIntakePosition);
+                    left_slide_motor.setTargetPosition(slideIntakePosition);
+                    right_slide_motor.setTargetPosition(slideIntakePosition);
+                    wrist_servo.setPosition(wristMiddlePosition);
+                })
+                .back(15)
+                .splineToLinearHeading(spikemarkPickupOne, Math.toRadians(0))
+                .addDisplacementMarker(() -> {
+                    intakeouttake_servo.setDirection(DcMotorSimple.Direction.REVERSE);
+                    intakeouttake_servo.setPower(1);
+                })
+                .waitSeconds(outtakeDuration)
+                .addDisplacementMarker(() -> {
+                    intakeouttake_servo.setPower(0);
+                    intakeouttake_servo.setDirection(DcMotorSimple.Direction.FORWARD);
+                })
+                .splineToLinearHeading(basketScorePose, Math.toRadians(-45))
+                .build();
+
+        pickupTwo = drive.trajectorySequenceBuilder(chamberToSamplePickup.end())
+                .addDisplacementMarker(10, () -> {
+                    pivot_motor.setTargetPosition(pivotIntakePosition);
+                    left_slide_motor.setTargetPosition(slideIntakePosition);
+                    right_slide_motor.setTargetPosition(slideIntakePosition);
+                    wrist_servo.setPosition(wristMiddlePosition);
+                })
+                .splineToLinearHeading(spikemarkPickupTwo, Math.toRadians(0))
+                .addDisplacementMarker( () -> {
+                    intakeouttake_servo.setDirection(DcMotorSimple.Direction.REVERSE);
+                    intakeouttake_servo.setPower(1);
+                })
+                .waitSeconds(outtakeDuration)
+                .addDisplacementMarker(() -> {
+                    intakeouttake_servo.setPower(0);
+                })
+                .splineToLinearHeading(basketScorePose, Math.toRadians(-45))
+                .build();
+
     }
 }

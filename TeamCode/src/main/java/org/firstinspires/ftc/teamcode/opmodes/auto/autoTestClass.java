@@ -24,16 +24,20 @@ public class autoTestClass extends LinearOpMode {
         SampleMecanumDrive drive;
         double outtakeTime;
 
-            RobotComponents.init(hardwareMap);
-            resetEncoders();
-            drive = new SampleMecanumDrive(hardwareMap);
-            drive.setPoseEstimate(startPose);
-            paths.buildPaths(drive);
+        RobotComponents.init(hardwareMap);
+        resetEncoders();
+        drive = new SampleMecanumDrive(hardwareMap);
+        drive.setPoseEstimate(startPose);
+
+        toChamberBasket = drive.trajectorySequenceBuilder(startPose)
+                .lineToConstantHeading(chamberBasketVector)
+                .build();
+
             pivot_motor.setTargetPosition(pivotDownPosition);
 
             TrajectorySequence testSec = drive.trajectorySequenceBuilder(startPose)
-                            .splineToConstantHeading(chamberBasketVector,Math.toRadians(90))
-                            .build();
+                    .splineToConstantHeading(chamberBasketVector,Math.toRadians(90))
+                    .build();
 
             waitForStart();
 
