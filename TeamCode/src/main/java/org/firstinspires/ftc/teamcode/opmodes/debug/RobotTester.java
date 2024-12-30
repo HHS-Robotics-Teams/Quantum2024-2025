@@ -28,6 +28,7 @@ public class RobotTester extends OpMode {
     public void init() {
         input = new Input();
         RobotComponents.init(hardwareMap);
+        RobotComponents.resetEncoders();
         telemetry.speak("Testing Mode Enabled");
         telemetry.addLine("Press Play to enter testing mode");
         RobotComponents.pivot_motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);

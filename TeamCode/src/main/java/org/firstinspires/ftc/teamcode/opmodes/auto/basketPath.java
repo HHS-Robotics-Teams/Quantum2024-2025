@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.opmodes.auto;
 
 import static org.firstinspires.ftc.teamcode.components.RobotComponents.left_slide_motor;
 import static org.firstinspires.ftc.teamcode.components.RobotComponents.pivot_motor;
+import static org.firstinspires.ftc.teamcode.components.RobotComponents.resetEncoders;
 import static org.firstinspires.ftc.teamcode.components.RobotComponents.right_slide_motor;
 import static org.firstinspires.ftc.teamcode.components.RobotComponents.wrist_servo;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.extendPower;
@@ -30,23 +31,19 @@ public class basketPath extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         RobotComponents.init(hardwareMap);
+        resetEncoders();
         left_slide_motor.setPower(extendPower);
         right_slide_motor.setPower(extendPower);
         pivot_motor.setPower(pivotPower);
 
-        while (opModeInInit()) {
-            wrist_servo.setPosition(wristMiddlePosition);
-            pivot_motor.setTargetPosition(pivotMiddleTarget);
-            left_slide_motor.setTargetPosition(25);
-            right_slide_motor.setTargetPosition(25);
-        }
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
-        Pose2d startPose = new Pose2d(11, 61, Math.toRadians(-90));
+        Pose2d startPose = new Pose2d(0, 0, Math.toRadians(0));
         drive.setPoseEstimate(startPose);
 
         TrajectorySequence forwardTrajectory = drive.trajectorySequenceBuilder(startPose)
-                .addDisplacementMarker(() -> {
+                .waitSeconds(.5)
+                .addTemporalMarker(0.25,() -> {
                     wrist_servo.setPosition(wristBarPosition);
                     left_slide_motor.setTargetPosition(slideHighBarPosition);
                     right_slide_motor.setTargetPosition(slideHighBarPosition);

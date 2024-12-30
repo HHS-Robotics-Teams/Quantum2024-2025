@@ -44,6 +44,11 @@ import static org.firstinspires.ftc.teamcode.opmodes.Constants.slideMotorPickupP
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.slideRetractedPosition;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.wristBarPosition;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.wristMiddlePosition;
+import static org.firstinspires.ftc.teamcode.opmodes.teleop.CompDrive25.armGoUpHighBasket;
+import static org.firstinspires.ftc.teamcode.opmodes.teleop.CompDrive25.armGoUpHighChamber;
+import static org.firstinspires.ftc.teamcode.opmodes.teleop.CompDrive25.armGoUpLowBasket;
+import static org.firstinspires.ftc.teamcode.opmodes.teleop.CompDrive25.armGoUpLowChamber;
+import static org.firstinspires.ftc.teamcode.opmodes.teleop.CompDrive25.armRetract;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -53,8 +58,8 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import org.firstinspires.ftc.teamcode.components.RobotComponents;
 import org.firstinspires.ftc.teamcode.excutil.Input;
 
-@TeleOp(group = "A most important group", name = "Competition Drive")
-public class CompDrive25 extends OpMode {
+@TeleOp(group = "A most important group", name = "Competition Drive No Auto")
+public class CompDrive25NoAuto extends OpMode {
 
     public Input input ;
     public double timeoutTime;
@@ -66,6 +71,7 @@ public class CompDrive25 extends OpMode {
     public void init() {
         input = new Input();
         RobotComponents.init(hardwareMap);
+        RobotComponents.resetEncoders();
     }
 
     public void start() {
@@ -288,196 +294,4 @@ public class CompDrive25 extends OpMode {
         input.pollGamepad(gamepad1);
     }
 
-
-    public static void armGoUpHighBasket() {
-
-        switch (currentArmStep) {
-
-            case (0):
-                left_slide_motor.setTargetPosition(slideRetractedPosition);
-                right_slide_motor.setTargetPosition(slideRetractedPosition);
-                left_slide_motor.setPower(extendPower);
-                right_slide_motor.setPower(extendPower);
-                pivot_motor.setTargetPosition(pivotUpHighTarget);
-                pivot_motor.setPower(pivotPower);
-                if (RobotComponents.isDone(pivot_motor, pivotMargin)&&RobotComponents.isDone(left_slide_motor, slideMargin)) {
-                    currentArmStep = 1;
-                }
-                break;
-
-            case (1):
-                wrist_servo.setPosition(wristMiddlePosition);
-                left_slide_motor.setPower(extendPower);
-                right_slide_motor.setPower(extendPower);
-                left_slide_motor.setTargetPosition(slideHighBasketPosition);
-                right_slide_motor.setTargetPosition(slideHighBasketPosition);
-                if (RobotComponents.isDone(left_slide_motor, slideMargin)) {
-                    currentArmStep = 0;
-                    armMoving = false;
-                    armUp = true;
-                }
-                break;
-        }
-
-    }
-
-    public static void armGoUpLowBasket () {
-
-        switch (currentArmStep) {
-
-            case (0):
-                //checks if the pivot is already pivoted, if yes it
-                //goes to the next step, otherwise runs the intermediate step
-                if(pivot_motor.getCurrentPosition() - pivotUpHighTarget > - 250 ) {
-                    currentArmStep = 1;
-                    break;
-                }
-                left_slide_motor.setTargetPosition(slideRetractedPosition);
-                right_slide_motor.setTargetPosition(slideRetractedPosition);
-                left_slide_motor.setPower(extendPower);
-                right_slide_motor.setPower(extendPower);
-                pivot_motor.setTargetPosition(pivotMiddleTarget);
-                pivot_motor.setPower(pivotPower2);
-                if (RobotComponents.isDone(pivot_motor, pivotMargin)&&RobotComponents.isDone(left_slide_motor, slideMargin)) {
-                    currentArmStep = 1;
-                }
-                break;
-
-            case (1):
-                pivot_motor.setTargetPosition(pivotUpLowTarget);
-                pivot_motor.setPower(pivotPower);
-                if (RobotComponents.isDone(pivot_motor, pivotMargin)) {
-                    currentArmStep = 2;
-                }
-                break;
-
-            case (2):
-                wrist_servo.setPosition(wristMiddlePosition);
-                left_slide_motor.setPower(extendPower);
-                right_slide_motor.setPower(extendPower);
-                left_slide_motor.setTargetPosition(slideLowBasketPosition);
-                right_slide_motor.setTargetPosition(slideLowBasketPosition);
-                if (RobotComponents.isDone(left_slide_motor, slideMargin)) {
-                    currentArmStep = 0;
-                    armMoving = false;
-                    armUp = true;
-                }
-                break;
-        }
-
-    }
-
-    public static void armGoUpHighChamber () {
-
-        switch (currentArmStep) {
-
-            case (0):
-                if(left_slide_motor.getCurrentPosition() > slideMargin){
-                    left_slide_motor.setTargetPosition(slideRetractedPosition);
-                    right_slide_motor.setTargetPosition(slideRetractedPosition);
-                } else {
-                    currentArmStep++;
-                }
-                if(isDone(left_slide_motor,slideMargin)){
-                    currentArmStep++;
-                }
-                break;
-
-            case (1):
-                pivot_motor.setTargetPosition(pivotHighBarTarget);
-                pivot_motor.setPower(pivotPower2);
-                if (RobotComponents.isDone(pivot_motor, pivotMargin)) {
-                    currentArmStep = 2;
-                }
-                break;
-
-            case (2):
-                wrist_servo.setPosition(wristBarPosition);
-                left_slide_motor.setPower(extendPower);
-                right_slide_motor.setPower(extendPower);
-                left_slide_motor.setTargetPosition(slideHighBarPosition);
-                right_slide_motor.setTargetPosition(slideHighBarPosition);
-                if (RobotComponents.isDone(left_slide_motor, slideMargin)) {
-                    currentArmStep = 0;
-                    armMoving = false;
-                    armUp = true;
-                }
-                break;
-
-        }
-
-    }
-
-    public static void armGoUpLowChamber () {
-
-        switch (currentArmStep) {
-
-            case (0):
-                pivot_motor.setTargetPosition(pivotMiddleTarget);
-                pivot_motor.setPower(pivotPower);
-                if (RobotComponents.isDone(pivot_motor, pivotMargin)) {
-                    currentArmStep = 1;
-                }
-                break;
-
-            case (1):
-                pivot_motor.setTargetPosition(pivotLowBarTarget);
-                pivot_motor.setPower(pivotPower2);
-                if (RobotComponents.isDone(pivot_motor, pivotMargin)) {
-                    currentArmStep = 2;
-                }
-                break;
-
-            case (2):
-                wrist_servo.setPosition(wristBarPosition);
-                left_slide_motor.setPower(extendPower);
-                right_slide_motor.setPower(extendPower);
-                left_slide_motor.setTargetPosition(slideLowBarPosition);
-                right_slide_motor.setTargetPosition(slideLowBarPosition);
-                if (RobotComponents.isDone(left_slide_motor, slideMargin)) {
-                    currentArmStep = 0;
-                    armMoving = false;
-                    armUp = true;
-                }
-                break;
-        }
-
-    }
-
-    public static void armRetract() {
-
-        switch (currentArmStep){
-            case(0):
-                wrist_servo.setPosition(wristMiddlePosition);
-                left_slide_motor.setTargetPosition(slideRetractedPosition);
-                right_slide_motor.setTargetPosition(slideRetractedPosition);
-                left_slide_motor.setPower(extendPower);
-                right_slide_motor.setPower(extendPower);
-                if(isDone(left_slide_motor,slideMargin)){
-                    currentArmStep++;
-                }
-                break;
-            case(1):
-                if(pivot_motor.getCurrentPosition() < pivotMiddleTarget){
-                    currentArmStep++;
-                    break;
-                }
-                pivot_motor.setTargetPosition(pivotMiddleTarget);
-                pivot_motor.setPower(pivotPower);
-                if(isDone(pivot_motor,pivotMargin)){
-                    currentArmStep++;
-                }
-                break;
-            case(2):
-                pivot_motor.setTargetPosition(pivotDownPosition);
-                pivot_motor.setPower(pivotPower2);
-                if(isDone(pivot_motor,pivotMargin*2)){
-                    currentArmStep = 0;
-                    armMoving = false;
-                    armUp = false;
-                    isRetracting = false;
-                }
-        }
-
-    }
 }

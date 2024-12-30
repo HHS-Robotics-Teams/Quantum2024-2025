@@ -123,20 +123,9 @@ public class RobotComponents {
 
         left_slide_motor = registerEncodedMotor(hardwareMap, "left_slide_motor", "Left Slide Motor");
         right_slide_motor = registerEncodedMotor(hardwareMap, "right_slide_motor", "Right Slide Motor");
-        left_slide_motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        right_slide_motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        left_slide_motor.setTargetPosition(0);
-        right_slide_motor.setTargetPosition(0);
-        left_slide_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        right_slide_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        left_slide_motor.setDirection(DcMotorSimple.Direction.FORWARD);
-        right_slide_motor.setDirection(DcMotorSimple.Direction.FORWARD);
+
 
         pivot_motor = hardwareMap.get(DcMotor.class, "pivot_motor");
-        pivot_motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        pivot_motor.setTargetPosition(0);
-        pivot_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        pivot_motor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         right_climb1_servo = hardwareMap.get(CRServo.class, "right_climb1_servo");
         left_climb1_servo = hardwareMap.get(CRServo.class, "left_climb1_servo");
@@ -145,6 +134,21 @@ public class RobotComponents {
 
         intakeouttake_servo = hardwareMap.get(CRServo.class, "intakeouttake_servo");
 
+    }
+
+    public static void resetEncoders() {
+        left_slide_motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        right_slide_motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        left_slide_motor.setTargetPosition(0);
+        right_slide_motor.setTargetPosition(0);
+        left_slide_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        right_slide_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        left_slide_motor.setDirection(DcMotorSimple.Direction.FORWARD);
+        right_slide_motor.setDirection(DcMotorSimple.Direction.FORWARD);
+        pivot_motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        pivot_motor.setTargetPosition(0);
+        pivot_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        pivot_motor.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
     public static void tickSystems(OpMode activeMode) {

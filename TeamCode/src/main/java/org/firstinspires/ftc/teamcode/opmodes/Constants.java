@@ -17,30 +17,38 @@ public class Constants {
     public static boolean isRetracting = false;
     //Macro toggle, toggled by back button press
     public static boolean macrosDisabled = false;
+    public static final double outtakeDuration = 0.5;
     public static final double overlyLargeNumber =  2147483647;
+
+    //AUTO TIMINGS
+    public static double basketChamberTime = 5;
+    public static double chmaberToPickupTime = 7.5;
+    public static double pickupTwoTime = 7.5;
+    public static double pickupThreeTime = 7.5;
+
+
     public static final int pickupPivotAmount = 6;
     public static final int extendoPivotAmount = 6;
-    public static final int pivotUpHighTarget = 1233;
+    public static final int pivotUpHighTarget = 1200;
     public static final double pivotMargin = 50;
     public static final double slideMargin = 50;
     public static final int pivotMiddleTarget = 800;
     public static final int pivotUpLowTarget = 1050;
-    public static final int pivotDownPosition = 300;
+    public static final int pivotDownPosition = 150;
     public static final int slideLowBasketPosition = 1450;
     public static final int slideHighBasketPosition = 2400;
     public static final int slideMaxExtensionTeleOp = 2725;
-    public static final int slideRetractedPosition = 5;
-    public static final int pivotHighBarTarget = 975;
+    public static final int slideRetractedPosition = 140;
+    public static final int pivotHighBarTarget = 925;
     public static final int pivotLowBarTarget = 750;
-    public static final int slideHighBarPosition = 1575;
-    public static final int slideHighBarScorePosition = 1500;
-    public static final int pivotHighBarScore = 750;
+    public static final int slideHighBarPosition = 1650;
+    public static final int slideHighBarScorePosition = 1600;
+    public static final int pivotHighBarScore = 600;
     public static final int slideLowBarPosition = 1400;
-    public static final double wristBarPosition = 1;
     public static final int pivotIntakePosition = 100;
     public static final int slideIntakePosition = 10;
     public static double wristMiddlePosition = .5;
-    public static double wristLeftPosition = 0;
+    public static final double wristBarPosition = .8;
     public static final double pivotPower = .8;
     public static final double pivotPower2 = .6;
     public static final double pivotIdle = .4;
