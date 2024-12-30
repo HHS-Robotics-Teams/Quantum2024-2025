@@ -21,7 +21,7 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 public class paths {
     public static Pose2d startPose = new Pose2d(0,0,Math.toRadians(90));
 
-    public static Vector2d chamberBasketVector = new Vector2d(4,26);
+    public static Vector2d chamberBasketVector = new Vector2d(4,23);
 
     public static Pose2d spikemarkPickupOne = new Pose2d(-24, 36);
     public static Pose2d spikemarkPickupTwo = new Pose2d(-34, 36);
