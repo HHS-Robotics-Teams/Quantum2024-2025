@@ -66,7 +66,7 @@ public class RobotComponents {
     public static CRServo right_climb1_servo = null;
     public static CRServo left_climb1_servo = null;
     public static Servo wrist_servo = null;
-    public static CRServo intakeouttake_servo = null;
+    public static Servo intakeouttake_servo = null;
 
     public static IMU imu;
 
@@ -132,7 +132,7 @@ public class RobotComponents {
 
         wrist_servo = registerServo(hardwareMap, "wrist_servo", "Wrist Servo");
 
-        intakeouttake_servo = hardwareMap.get(CRServo.class, "intakeouttake_servo");
+        intakeouttake_servo = hardwareMap.get(Servo.class, "intakeouttake_servo");
 
     }
 

@@ -10,6 +10,8 @@ import static org.firstinspires.ftc.teamcode.components.RobotComponents.wrist_se
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.armMoving;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.armUp;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.basketChamberTime;
+import static org.firstinspires.ftc.teamcode.opmodes.Constants.closedPosition;
+import static org.firstinspires.ftc.teamcode.opmodes.Constants.openPosition;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.outtakeDuration;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.pivotDownPosition;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.pivotHighBarScore;
@@ -20,6 +22,7 @@ import static org.firstinspires.ftc.teamcode.opmodes.Constants.pivotPower2;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.slideHighBarPosition;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.slideHighBarScorePosition;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.slideIntakePosition;
+import static org.firstinspires.ftc.teamcode.opmodes.Constants.slideMargin;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.wristBarPosition;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.wristMiddlePosition;
 import static org.firstinspires.ftc.teamcode.opmodes.auto.autoutil.paths.basketChamberScore;
@@ -33,6 +36,8 @@ import static org.firstinspires.ftc.teamcode.opmodes.auto.autoutil.paths.startPo
 import static org.firstinspires.ftc.teamcode.opmodes.auto.autoutil.paths.toChamberBasket;
 import static org.firstinspires.ftc.teamcode.opmodes.teleop.CompDrive25.armGoUpHighBasket;
 
+import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -45,197 +50,96 @@ import org.firstinspires.ftc.teamcode.opmodes.auto.autoutil.paths;
 @Autonomous
 public class basketPathPlus extends OpMode {
 
-    static String currentAutoStep = "Path to Basket";
+    private boolean stepTimeGot = false;
+    private double stepStartTime;
     static int currentArmStepAUTO = 0;
+    private String currentAutoStep = "Path to Chamber";
     double outtakeTime;
     boolean pathInitialized = false;
+    Trajectory toChamber;
     SampleMecanumDrive drive;
 
-        @Override
-        public void init() {
-            RobotComponents.init(hardwareMap);
-            resetEncoders();
-            drive = new SampleMecanumDrive(hardwareMap);
-            drive.setPoseEstimate(startPose);
-            buildPaths(drive);
-        }
+    @Override
+    public void init() {
+        RobotComponents.init(hardwareMap);
+        resetEncoders();
+        drive = new SampleMecanumDrive(hardwareMap);
+        drive.setPoseEstimate(startPose);
+        buildPaths(drive);
+    }
 
-        @Override
-        public void start() {
-            pivot_motor.setTargetPosition(pivotDownPosition);
-            pivot_motor.setPower(pivotPower2);
-            wrist_servo.setPosition(wristMiddlePosition);
-        }
+    @Override
+    public void start() {
+        pivot_motor.setTargetPosition(pivotDownPosition);
+        pivot_motor.setPower(pivotPower2);
+        wrist_servo.setPosition(wristMiddlePosition);
+    }
 
-        @Override
-        public void loop() {
-            drive.update();
+    @Override
+    public void loop() {
+        drive.update();
 
-            telemetry.addData("Current Auto Step:", currentAutoStep);
-            telemetry.addData("Current Arm Step:", currentArmStepAUTO);
-            telemetry.addData("Arm Up Flag Status: ", armUp);
+        telemetry.addData("Current Auto Step:", currentAutoStep);
+        telemetry.addData("Current Arm Step:", currentArmStepAUTO);
+        telemetry.addData("Arm Up Flag Status: ", armUp);
 
-            switch(currentAutoStep){
-
-                case("Path to Basket"):
-                    if(!armUp) {
-                        armGoUpHighChamberAUTO();
-                    }
-                    if(!pathInitialized) {
-                        drive.followTrajectorySequenceAsync(toChamberBasket);
-                        pathInitialized = true;
-                    }
-                    if(getRuntime() >= basketChamberTime){
-                        currentAutoStep = "Score Specimen";
-                        armUp = false;
-                        pathInitialized = false;
-                    }
-                    break;
-
-                case("Score Specimen"):
-                    pivot_motor.setTargetPosition(pivotHighBarScore);
-                    left_slide_motor.setTargetPosition(slideHighBarScorePosition);
-                    right_slide_motor.setTargetPosition(slideHighBarScorePosition);
-                    drive.followTrajectorySequenceAsync(basketChamberScore);
-                    if(!drive.isBusy()){
-                        currentAutoStep = "Pickup One";
-                    }
-                    break;
-
-                case("Pickup One"):
-                    drive.followTrajectorySequenceAsync(chamberToSamplePickup);
-                    if(!drive.isBusy()){
-                        currentAutoStep = "Score Basket One";
-                    }
-                    break;
-
-                case("Score Basket One"):
-                    if(armUp) {
-                        intakeouttake_servo.setDirection(DcMotorSimple.Direction.FORWARD);
-                        intakeouttake_servo.setPower(1);
-                        outtakeTime = getRuntime();
-                        armUp = false;
-                        break;
-                    }
-
-                    if(armMoving) {
-                        outtakeTime = getRuntime();
-                        break;
-                    }
-
-                    if( (Math.abs(outtakeTime - getRuntime()) ) > outtakeDuration){
-                        break;
-                    }
-
-                    armGoUpHighBasket();
-                    armMoving = true;
-                    break;
-
-                case("Pickup Two"):
-                    drive.followTrajectorySequenceAsync(pickupTwo);
-                    if(!drive.isBusy()){
-                        currentAutoStep = "Score Basket Two";
-                    }
-                    break;
-
-                case("Score Basket Two"):
-                    if(armUp) {
-                        intakeouttake_servo.setDirection(DcMotorSimple.Direction.FORWARD);
-                        intakeouttake_servo.setPower(1);
-                        outtakeTime = getRuntime();
-                        armUp = false;
-                        break;
-                    }
-
-                    if(armMoving) {
-                        outtakeTime = getRuntime();
-                        break;
-                    }
-
-                    if( (Math.abs(outtakeTime - getRuntime()) ) > outtakeDuration){
-                        currentAutoStep = "Pickup Three";
-                        break;
-                    }
-
-                    armGoUpHighBasket();
-                    armMoving = true;
-                    break;
-            }
-        }
-
-
-
-    void armGoUpHighChamberAUTO() {
-        switch (currentArmStepAUTO) {
-            case (0):
-                wrist_servo.setPosition(wristBarPosition);
-                pivot_motor.setTargetPosition(pivotHighBarTarget);
-                if (isDone(pivot_motor, pivotMargin)) {
-                    currentArmStepAUTO++;
+        switch (currentAutoStep) {
+            case ("Path to Chamber"):
+                if(!stepTimeGot){
+                    getStepStartTime();
+                }
+                drive.followTrajectoryAsync(toChamber);
+                if(!drive.isBusy() && arbitraryStepTimeElapsed()) {
+                    currentAutoStep = "Score Chamber";
                 }
                 break;
-            case (1):
-                left_slide_motor.setTargetPosition(slideHighBarPosition);
-                right_slide_motor.setTargetPosition(slideHighBarPosition);
-                if (isDone(left_slide_motor, pivotMargin)) {
-                    currentArmStepAUTO++;
+            case("Score Chamber"):
+                switch (currentArmStepAUTO){
+                    case(0):
+                        if(isDone(left_slide_motor, slideMargin) && isDone(pivot_motor, pivotMargin)){
+                            currentArmStepAUTO++;
+                        }
+                    case(1):
+                        pivot_motor.setTargetPosition(pivotHighBarScore);
+                        if(isDone(pivot_motor, 10)){
+                            intakeouttake_servo.setPosition(openPosition);
+                            wrist_servo.setPosition(wristMiddlePosition);
+                            currentArmStepAUTO = 0;
+                            currentAutoStep = "Pickup One";
+                            break;
+                        }
                 }
-                break;
-            case (2):
-                currentArmStepAUTO = 0;
-                armUp = true;
-                break;
         }
     }
-     void buildPaths(SampleMecanumDrive drive) {
 
-        toChamberBasket = drive.trajectorySequenceBuilder(startPose)
-                .lineToConstantHeading(chamberBasketVector)
+    private void getStepStartTime() {
+        stepStartTime = getRuntime();
+        stepTimeGot = true;
+    }
+
+    private boolean arbitraryStepTimeElapsed() {
+        if ((getRuntime() - stepStartTime) > 0.125) {
+            stepTimeGot = false;
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private void buildPaths (SampleMecanumDrive drive) {
+        toChamber = drive.trajectoryBuilder(startPose)
+                .lineToConstantHeading(new Vector2d(2, 18))
+                .addDisplacementMarker(5, () -> {
+                    pivot_motor.setTargetPosition(pivotHighBarTarget);
+                    wrist_servo.setPosition(wristBarPosition);
+                })
+                .addDisplacementMarker(12, () -> {
+                    left_slide_motor.setTargetPosition(slideHighBarPosition);
+                    right_slide_motor.setTargetPosition(slideHighBarPosition);
+                })
                 .build();
 
-        basketChamberScore = drive.trajectorySequenceBuilder(toChamberBasket.end())
-                .back(5)
-                .build();
-
-        chamberToSamplePickup = drive.trajectorySequenceBuilder(basketChamberScore.end())
-                .addDisplacementMarker(20, () -> {
-                    pivot_motor.setTargetPosition(pivotIntakePosition);
-                    left_slide_motor.setTargetPosition(slideIntakePosition);
-                    right_slide_motor.setTargetPosition(slideIntakePosition);
-                    wrist_servo.setPosition(wristMiddlePosition);
-                })
-                .back(15)
-                .splineToLinearHeading(spikemarkPickupOne, Math.toRadians(0))
-                .addDisplacementMarker(() -> {
-                    intakeouttake_servo.setDirection(DcMotorSimple.Direction.REVERSE);
-                    intakeouttake_servo.setPower(1);
-                })
-                .waitSeconds(outtakeDuration)
-                .addDisplacementMarker(() -> {
-                    intakeouttake_servo.setPower(0);
-                    intakeouttake_servo.setDirection(DcMotorSimple.Direction.FORWARD);
-                })
-                .splineToLinearHeading(basketScorePose, Math.toRadians(-45))
-                .build();
-
-        pickupTwo = drive.trajectorySequenceBuilder(chamberToSamplePickup.end())
-                .addDisplacementMarker(10, () -> {
-                    pivot_motor.setTargetPosition(pivotIntakePosition);
-                    left_slide_motor.setTargetPosition(slideIntakePosition);
-                    right_slide_motor.setTargetPosition(slideIntakePosition);
-                    wrist_servo.setPosition(wristMiddlePosition);
-                })
-                .splineToLinearHeading(spikemarkPickupTwo, Math.toRadians(0))
-                .addDisplacementMarker( () -> {
-                    intakeouttake_servo.setDirection(DcMotorSimple.Direction.REVERSE);
-                    intakeouttake_servo.setPower(1);
-                })
-                .waitSeconds(outtakeDuration)
-                .addDisplacementMarker(() -> {
-                    intakeouttake_servo.setPower(0);
-                })
-                .splineToLinearHeading(basketScorePose, Math.toRadians(-45))
-                .build();
 
     }
+
 }

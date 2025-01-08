@@ -1,8 +1,10 @@
 package org.firstinspires.ftc.teamcode.opmodes.debug;
 
 
+import static org.firstinspires.ftc.teamcode.components.RobotComponents.intakeouttake_servo;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.climbServoPower;
-import static org.firstinspires.ftc.teamcode.opmodes.Constants.intakePower;
+import static org.firstinspires.ftc.teamcode.opmodes.Constants.closedPosition;
+import static org.firstinspires.ftc.teamcode.opmodes.Constants.openPosition;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -83,15 +85,12 @@ public class RobotTester extends OpMode {
         //END OF ARM CODE
 
         //IntakeOuttake CODE
-        if(input.right_trigger.held()) {
-            RobotComponents.intakeouttake_servo.setDirection(DcMotorSimple.Direction.FORWARD);
-            RobotComponents.intakeouttake_servo.setPower(intakePower);
+        if(input.right_trigger.down()){
+            intakeouttake_servo.setPosition(closedPosition);
         }
-         else if(input.left_trigger.held()) {
-            RobotComponents.intakeouttake_servo.setDirection(DcMotorSimple.Direction.REVERSE);
-            RobotComponents.intakeouttake_servo.setPower(intakePower);
-        } else {
-            RobotComponents.intakeouttake_servo.setPower(0);
+
+        if(input.left_trigger.down()) {
+            intakeouttake_servo.setPosition(openPosition);
         }
 
         if(input.left_bumper.down()) {

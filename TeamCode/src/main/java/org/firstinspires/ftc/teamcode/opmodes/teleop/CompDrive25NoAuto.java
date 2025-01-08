@@ -16,13 +16,14 @@ import static org.firstinspires.ftc.teamcode.opmodes.Constants.armMoving;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.armUp;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.basket;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.climbServoPower;
+import static org.firstinspires.ftc.teamcode.opmodes.Constants.closedPosition;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.extendPower;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.extendoPivotAmount;
-import static org.firstinspires.ftc.teamcode.opmodes.Constants.intakePower;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.isExtending;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.isRetracting;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.macroTimetoTimeout;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.macrosDisabled;
+import static org.firstinspires.ftc.teamcode.opmodes.Constants.openPosition;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.overlyLargeNumber;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.pickupPivotAmount;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.pivotDownPosition;
@@ -124,19 +125,14 @@ public class CompDrive25NoAuto extends OpMode {
         }
 
         //IntakeOuttake code
-        if(input.right_trigger.held()){
-            intakeouttake_servo.setDirection(CRServo.Direction.FORWARD);
-            intakeouttake_servo.setPower(intakePower);
+        if(input.right_trigger.down()){
+            intakeouttake_servo.setPosition(closedPosition);
         }
 
-        else if(input.left_trigger.held()) {
-            intakeouttake_servo.setDirection(CRServo.Direction.REVERSE);
-            intakeouttake_servo.setPower(intakePower);
+        if(input.left_trigger.down()) {
+            intakeouttake_servo.setPosition(openPosition);
         }
 
-        else {
-            intakeouttake_servo.setPower(0);
-        }
 
         //ARM
         if(isRetracting){

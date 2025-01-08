@@ -43,7 +43,7 @@ public class Constants {
     public static final int pivotLowBarTarget = 750;
     public static final int slideHighBarPosition = 1650;
     public static final int slideHighBarScorePosition = 1600;
-    public static final int pivotHighBarScore = 600;
+    public static final int pivotHighBarScore = 875;
     public static final int slideLowBarPosition = 1400;
     public static final int pivotIntakePosition = 100;
     public static final int slideIntakePosition = 10;
@@ -54,7 +54,8 @@ public class Constants {
     public static final double pivotIdle = .4;
     public static final double extendPower = .8;
     public static final double slideIdle = .2;
-    public static double intakePower = .8;
+    public static final double openPosition = .6;
+    public static final double closedPosition = .1;
     public static double climbServoPower = .4;
     public static double slideMotorPickupPower = .75;
     //timeout for each macro step (in seconds)

@@ -1,11 +1,14 @@
 package org.firstinspires.ftc.teamcode.opmodes.auto;
 
+import static org.firstinspires.ftc.teamcode.components.RobotComponents.intakeouttake_servo;
 import static org.firstinspires.ftc.teamcode.components.RobotComponents.left_slide_motor;
 import static org.firstinspires.ftc.teamcode.components.RobotComponents.pivot_motor;
 import static org.firstinspires.ftc.teamcode.components.RobotComponents.resetEncoders;
 import static org.firstinspires.ftc.teamcode.components.RobotComponents.right_slide_motor;
 import static org.firstinspires.ftc.teamcode.components.RobotComponents.wrist_servo;
+import static org.firstinspires.ftc.teamcode.opmodes.Constants.closedPosition;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.extendPower;
+import static org.firstinspires.ftc.teamcode.opmodes.Constants.openPosition;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.pivotHighBarScore;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.pivotHighBarTarget;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.pivotMiddleTarget;
@@ -36,9 +39,8 @@ public class observationSpeceminAuto extends LinearOpMode {
         left_slide_motor.setPower(extendPower);
         right_slide_motor.setPower(extendPower);
         pivot_motor.setPower(pivotPower);
+        intakeouttake_servo.setPosition(closedPosition);
 
-        while (opModeInInit()) {
-        }
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
         Pose2d startPose = new Pose2d(0, 0, Math.toRadians(0));
@@ -62,6 +64,7 @@ public class observationSpeceminAuto extends LinearOpMode {
                 .turn(Math.toRadians(-10))
                 .forward(4)
                 .addDisplacementMarker( () -> {
+                    intakeouttake_servo.setPosition(openPosition);
                     pivot_motor.setTargetPosition(pivotHighBarScore);
                     left_slide_motor.setTargetPosition(slideHighBarScorePosition);
                     right_slide_motor.setTargetPosition(slideHighBarScorePosition);

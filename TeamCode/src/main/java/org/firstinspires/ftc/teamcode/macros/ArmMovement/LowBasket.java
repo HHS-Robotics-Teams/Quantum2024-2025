@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.macros.ArmMovement;
 import static org.firstinspires.ftc.teamcode.macros.ArmMovement.HighBasket.pivotMiddleTarget;
 import static org.firstinspires.ftc.teamcode.macros.ArmMovement.HighBasket.pivotUpTarget;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.extendPower;
-import static org.firstinspires.ftc.teamcode.opmodes.Constants.intakePower;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.pivotDownPosition;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.pivotPower;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.pivotPower2;

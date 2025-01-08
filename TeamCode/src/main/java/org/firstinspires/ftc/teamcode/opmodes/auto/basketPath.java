@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode.opmodes.auto;
 
+import static org.firstinspires.ftc.teamcode.components.RobotComponents.intakeouttake_servo;
 import static org.firstinspires.ftc.teamcode.components.RobotComponents.left_slide_motor;
 import static org.firstinspires.ftc.teamcode.components.RobotComponents.pivot_motor;
 import static org.firstinspires.ftc.teamcode.components.RobotComponents.resetEncoders;
 import static org.firstinspires.ftc.teamcode.components.RobotComponents.right_slide_motor;
 import static org.firstinspires.ftc.teamcode.components.RobotComponents.wrist_servo;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.extendPower;
+import static org.firstinspires.ftc.teamcode.opmodes.Constants.openPosition;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.pivotHighBarScore;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.pivotHighBarTarget;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.pivotMiddleTarget;
@@ -43,16 +45,17 @@ public class basketPath extends LinearOpMode {
 
         TrajectorySequence forwardTrajectory = drive.trajectorySequenceBuilder(startPose)
                 .waitSeconds(.5)
-                .addTemporalMarker(0.25,() -> {
+                .addTemporalMarker(0.75,() -> {
                     wrist_servo.setPosition(wristBarPosition);
                     left_slide_motor.setTargetPosition(slideHighBarPosition);
                     right_slide_motor.setTargetPosition(slideHighBarPosition);
                     pivot_motor.setTargetPosition(pivotHighBarTarget);
                 })
-                .forward(32)
+                .forward(30)
                 .strafeRight(4)
                 .turn(Math.toRadians(22))
                 .addDisplacementMarker(() -> {
+                    intakeouttake_servo.setPosition(openPosition);
                     pivot_motor.setTargetPosition(pivotHighBarScore);
                     left_slide_motor.setTargetPosition(slideHighBarScorePosition);
                     right_slide_motor.setTargetPosition(slideHighBarScorePosition);
@@ -62,8 +65,7 @@ public class basketPath extends LinearOpMode {
                     left_slide_motor.setTargetPosition(slideRetractedPosition);
                     right_slide_motor.setTargetPosition(slideRetractedPosition);
                 })
-
-                .back(2)
+                .back(5)
                 //end reset to start pos
                 .UNSTABLE_addDisplacementMarkerOffset(4, () -> {
                     wrist_servo.setPosition(0);
