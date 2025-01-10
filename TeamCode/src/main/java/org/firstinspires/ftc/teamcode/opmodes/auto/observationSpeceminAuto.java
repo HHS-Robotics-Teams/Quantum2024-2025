@@ -20,6 +20,7 @@ import static org.firstinspires.ftc.teamcode.opmodes.Constants.wristBarPosition;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.wristMiddlePosition;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -47,48 +48,30 @@ public class observationSpeceminAuto extends LinearOpMode {
         drive.setPoseEstimate(startPose);
 
         TrajectorySequence forwardTrajectory = drive.trajectorySequenceBuilder(startPose)
+                .waitSeconds(10)
                 .addDisplacementMarker(() -> {
                     pivot_motor.setTargetPosition(pivotHighBarTarget);
                     telemetry.addLine("huh");
                     telemetry.addData("pivottarget", pivot_motor.getTargetPosition());
                     telemetry.update();
-                })
-                .waitSeconds(.5)
-                .addDisplacementMarker(() -> {
                     wrist_servo.setPosition(wristBarPosition);
+                    intakeouttake_servo.setPosition(closedPosition);
+                })
+                .forward(20)
+                .addDisplacementMarker(5, () -> {
                     left_slide_motor.setTargetPosition(slideHighBarPosition);
                     right_slide_motor.setTargetPosition(slideHighBarPosition);
                 })
-                .turn(Math.toRadians(18))
-                .forward(24)
-                .turn(Math.toRadians(-10))
-                .forward(4)
-                .addDisplacementMarker( () -> {
-                    intakeouttake_servo.setPosition(openPosition);
+                .waitSeconds(.25)
+                .addDisplacementMarker(() -> {
                     pivot_motor.setTargetPosition(pivotHighBarScore);
-                    left_slide_motor.setTargetPosition(slideHighBarScorePosition);
-                    right_slide_motor.setTargetPosition(slideHighBarScorePosition);
+                    wrist_servo.setPosition(wristMiddlePosition);
                 })
-                .waitSeconds(1)
+                .waitSeconds(10)
+                .splineTo(new Vector2d(5, 36), Math.toRadians(0))
                 .addDisplacementMarker(() -> {
                     left_slide_motor.setTargetPosition(slideRetractedPosition);
                     right_slide_motor.setTargetPosition(slideRetractedPosition);
-                })
-                .back(22)
-                .waitSeconds(.5)
-                .turn(Math.toRadians(80))
-                .back(40)
-                .waitSeconds(.2)
-                .turn(Math.toRadians(2))
-                .strafeLeft(12)
-
-
-        //end reset to start pos
-                .addDisplacementMarker(() -> {
-                    wrist_servo.setPosition(wristBarPosition);
-                    pivot_motor.setTargetPosition(0);
-                    left_slide_motor.setTargetPosition(0);
-                    right_slide_motor.setTargetPosition(0);
                 })
                 .build();
 
@@ -97,6 +80,7 @@ public class observationSpeceminAuto extends LinearOpMode {
         if (isStopRequested()) {
             return;
         }
+        intakeouttake_servo.setPosition(closedPosition);
 
         drive.followTrajectorySequence(forwardTrajectory);
 

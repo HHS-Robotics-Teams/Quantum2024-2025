@@ -59,7 +59,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import org.firstinspires.ftc.teamcode.components.RobotComponents;
 import org.firstinspires.ftc.teamcode.excutil.Input;
 
-@TeleOp(group = "A most important group", name = "Competition Drive No Auto")
+@TeleOp(name = "Competition Drive No Auto")
 public class CompDrive25NoAuto extends OpMode {
 
     public Input input ;

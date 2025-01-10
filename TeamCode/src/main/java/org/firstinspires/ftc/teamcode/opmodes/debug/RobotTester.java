@@ -86,11 +86,11 @@ public class RobotTester extends OpMode {
 
         //IntakeOuttake CODE
         if(input.right_trigger.down()){
-            intakeouttake_servo.setPosition(closedPosition);
+            intakeouttake_servo.setPosition(intakeouttake_servo.getPosition() + servoMove);
         }
 
         if(input.left_trigger.down()) {
-            intakeouttake_servo.setPosition(openPosition);
+            intakeouttake_servo.setPosition(intakeouttake_servo.getPosition() - servoMove);
         }
 
         if(input.left_bumper.down()) {

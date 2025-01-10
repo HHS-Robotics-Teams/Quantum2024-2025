@@ -1,26 +1,26 @@
 package org.firstinspires.ftc.teamcode.opmodes.auto;
 
 import static org.firstinspires.ftc.teamcode.components.RobotComponents.intakeouttake_servo;
+import static org.firstinspires.ftc.teamcode.components.RobotComponents.leftFront;
 import static org.firstinspires.ftc.teamcode.components.RobotComponents.left_slide_motor;
 import static org.firstinspires.ftc.teamcode.components.RobotComponents.pivot_motor;
 import static org.firstinspires.ftc.teamcode.components.RobotComponents.resetEncoders;
+import static org.firstinspires.ftc.teamcode.components.RobotComponents.rightFront;
 import static org.firstinspires.ftc.teamcode.components.RobotComponents.right_slide_motor;
 import static org.firstinspires.ftc.teamcode.components.RobotComponents.wrist_servo;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.closedPosition;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.extendPower;
-import static org.firstinspires.ftc.teamcode.opmodes.Constants.openPosition;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.pivotHighBarScore;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.pivotHighBarTarget;
-import static org.firstinspires.ftc.teamcode.opmodes.Constants.pivotLowBarTarget;
-import static org.firstinspires.ftc.teamcode.opmodes.Constants.pivotMiddleTarget;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.pivotPower;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.slideHighBarPosition;
-import static org.firstinspires.ftc.teamcode.opmodes.Constants.slideHighBarScorePosition;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.slideRetractedPosition;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.wristBarPosition;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.wristMiddlePosition;
+import static org.firstinspires.ftc.teamcode.opmodes.auto.autoutil.paths.startPose;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -29,7 +29,7 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
 @Autonomous
-public class basketPath extends LinearOpMode {
+public class panicAuto extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -39,56 +39,24 @@ public class basketPath extends LinearOpMode {
         left_slide_motor.setPower(extendPower);
         right_slide_motor.setPower(extendPower);
         pivot_motor.setPower(pivotPower);
+        intakeouttake_servo.setPosition(closedPosition);
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
-
-        Pose2d startPose = new Pose2d(0, 0, Math.toRadians(0));
         drive.setPoseEstimate(startPose);
 
-        TrajectorySequence forwardTrajectory = drive.trajectorySequenceBuilder(startPose)
-                .addDisplacementMarker(() -> {
-                    intakeouttake_servo.setPosition(closedPosition);
-                    pivot_motor.setTargetPosition(pivotLowBarTarget);
-                })
-                .waitSeconds(.5)
-                .addTemporalMarker(0.75,() -> {
-                    wrist_servo.setPosition(wristBarPosition);
-                    left_slide_motor.setTargetPosition(slideHighBarPosition);
-                    right_slide_motor.setTargetPosition(slideHighBarPosition);
-                    pivot_motor.setTargetPosition(pivotHighBarTarget);
-                })
-                .forward(28)
-                .addDisplacementMarker(() -> {
-                    intakeouttake_servo.setPosition(openPosition);
-                    pivot_motor.setTargetPosition(pivotHighBarScore);
-                    left_slide_motor.setTargetPosition(slideHighBarScorePosition);
-                    right_slide_motor.setTargetPosition(slideHighBarScorePosition);
-                })
-                .waitSeconds(1)
-                .addDisplacementMarker(() -> {
-                    left_slide_motor.setTargetPosition(slideRetractedPosition);
-                    right_slide_motor.setTargetPosition(slideRetractedPosition);
-                })
-                .back(5)
-                //end reset to start pos
-                .addDisplacementMarker( () -> {
-                    wrist_servo.setPosition(0);
-                    pivot_motor.setTargetPosition(0);
-                    left_slide_motor.setTargetPosition(0);
-                    right_slide_motor.setTargetPosition(0);
-                })
-                .build();
 
         waitForStart();
 
         if (isStopRequested()) {
             return;
         }
-
         intakeouttake_servo.setPosition(closedPosition);
-        drive.followTrajectorySequence(forwardTrajectory);
-
-        telemetry.addData("Status", "Autonomous Complete");
+        leftFront.setPower(1);
+        rightFront.setPower(1);
+        drive.followTrajectorySequence(drive.trajectorySequenceBuilder(startPose).waitSeconds(2).build());
+        leftFront.setPower(0);
+        rightFront.setPower(0);
+        telemetry.addData("Status:", "Autonomous Complete");
         telemetry.update();
     }
 }

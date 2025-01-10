@@ -27,8 +27,8 @@ public class Constants {
     public static double pickupThreeTime = 7.5;
 
 
-    public static final int pickupPivotAmount = 6;
-    public static final int extendoPivotAmount = 6;
+    public static final int pickupPivotAmount = 15;
+    public static final int extendoPivotAmount = 50;
     public static final int pivotUpHighTarget = 1200;
     public static final double pivotMargin = 50;
     public static final double slideMargin = 50;
@@ -47,15 +47,15 @@ public class Constants {
     public static final int slideLowBarPosition = 1400;
     public static final int pivotIntakePosition = 100;
     public static final int slideIntakePosition = 10;
-    public static double wristMiddlePosition = .5;
-    public static final double wristBarPosition = .8;
+    public static double wristMiddlePosition = .4;
+    public static final double wristBarPosition = .7;
     public static final double pivotPower = .8;
     public static final double pivotPower2 = .6;
     public static final double pivotIdle = .4;
     public static final double extendPower = .8;
     public static final double slideIdle = .2;
-    public static final double openPosition = .6;
-    public static final double closedPosition = .1;
+    public static final double openPosition = 0;
+    public static final double closedPosition = 0.25;
     public static double climbServoPower = .4;
     public static double slideMotorPickupPower = .75;
     //timeout for each macro step (in seconds)
