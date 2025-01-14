@@ -28,6 +28,7 @@ import static org.firstinspires.ftc.teamcode.opmodes.Constants.overlyLargeNumber
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.pickupPivotAmount;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.pivotDownPosition;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.pivotHighBarTarget;
+import static org.firstinspires.ftc.teamcode.opmodes.Constants.pivotHighThreshold;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.pivotLowBarTarget;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.pivotMargin;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.pivotMiddleTarget;
@@ -77,6 +78,8 @@ public class CompDrive25NoAuto extends OpMode {
 
     public void start() {
         pivot_motor.setTargetPosition(pivotDownPosition);
+        intakeouttake_servo.setPosition(closedPosition);
+        wrist_servo.setPosition(wristBarPosition);
         basket = true;
     }
 
@@ -177,11 +180,11 @@ public class CompDrive25NoAuto extends OpMode {
         }
 
         //Wrist Code
-        if(input.right_bumper.down()) {
+        if(input.left_bumper.down()) {
             wrist_servo.setPosition(wristMiddlePosition);
         }
 
-        if(input.left_bumper.down()) {
+        if(input.right_bumper.down()) {
             wrist_servo.setPosition(wristBarPosition);
         }
 
@@ -242,6 +245,14 @@ public class CompDrive25NoAuto extends OpMode {
             y=y/2;
             x=x/1.5;
             rx=rx/1.5;
+        }
+
+        //slowdown for arm when low
+        if(pivot_motor.getCurrentPosition() < pivotHighThreshold) {
+
+            pivot_motor.setPower(pivotPower / 4 );
+            left_slide_motor.setPower(slideMotorPickupPower / 4 );
+            right_slide_motor.setPower(slideMotorPickupPower / 4 );
         }
 
         leftFront.setPower(y + x + rx);
