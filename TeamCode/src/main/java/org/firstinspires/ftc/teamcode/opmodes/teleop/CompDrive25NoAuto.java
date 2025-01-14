@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.opmodes.teleop;
 
+import static org.firstinspires.ftc.teamcode.components.RobotComponents.imu;
 import static org.firstinspires.ftc.teamcode.components.RobotComponents.intakeouttake_servo;
 import static org.firstinspires.ftc.teamcode.components.RobotComponents.isDone;
 import static org.firstinspires.ftc.teamcode.components.RobotComponents.leftFront;
@@ -57,6 +58,9 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.teamcode.components.RobotComponents;
 import org.firstinspires.ftc.teamcode.excutil.Input;
 
@@ -262,6 +266,7 @@ public class CompDrive25NoAuto extends OpMode {
         //END OF DRIVETRAIN CODE
 
         //TELEMETRY CODE
+        telemetry.addData("imu Z", imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.RADIANS).thirdAngle);
         telemetry.addLine("--------------- POSITIONS ---------------");
         telemetry.addData("Left slide motor current position:", left_slide_motor.getCurrentPosition());
         telemetry.addData("Right slide motor current position:", left_slide_motor.getCurrentPosition());

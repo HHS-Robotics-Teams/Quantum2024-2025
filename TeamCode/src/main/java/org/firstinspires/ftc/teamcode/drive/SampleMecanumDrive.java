@@ -60,7 +60,7 @@ public class SampleMecanumDrive extends MecanumDrive {
     public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(8, 0, 0);
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(8 , 0, 0);
 
-    public static double LATERAL_MULTIPLIER = 1.00000611115;
+    public static double LATERAL_MULTIPLIER = 1;
 
     public static double VX_WEIGHT = 1;
     public static double VY_WEIGHT = 1;
@@ -85,7 +85,7 @@ public class SampleMecanumDrive extends MecanumDrive {
     private VoltageSensor batteryVoltageSensor;
 
     private float[] wheelMultipliers = new float[] {
-            0.94f, 1f, 1f, 0.98f
+            1f,1f,1f,1f
     };
 
     public SampleMecanumDrive(HardwareMap hardwareMap) {
@@ -106,8 +106,8 @@ public class SampleMecanumDrive extends MecanumDrive {
         imu = hardwareMap.get(BHI260IMU.class, "imu");
         // TODO check
         BHI260IMU.Parameters parameters = new BHI260IMU.Parameters(
-                new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
-                        RevHubOrientationOnRobot.UsbFacingDirection.DOWN)
+                new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.DOWN,
+                        RevHubOrientationOnRobot.UsbFacingDirection.RIGHT)
         );
         imu.initialize(parameters);
 
@@ -328,7 +328,7 @@ public class SampleMecanumDrive extends MecanumDrive {
     //TODO check
     @Override
     public double getRawExternalHeading() {
-        return imu.getRobotOrientation(AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.RADIANS).thirdAngle;
+        return imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.RADIANS).thirdAngle;
     }
 
     @Override
