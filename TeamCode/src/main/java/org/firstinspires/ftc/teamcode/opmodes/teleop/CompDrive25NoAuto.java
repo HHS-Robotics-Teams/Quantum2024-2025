@@ -64,7 +64,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.teamcode.components.RobotComponents;
 import org.firstinspires.ftc.teamcode.excutil.Input;
 
-@TeleOp(name = "Competition Drive No Auto")
+@TeleOp(name = "Competition Drive")
 public class CompDrive25NoAuto extends OpMode {
 
     public Input input ;

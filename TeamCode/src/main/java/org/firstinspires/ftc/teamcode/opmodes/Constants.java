@@ -42,10 +42,10 @@ public class Constants {
     public static final int slideHighBasketPosition = 2400;
     public static final int slideMaxExtensionTeleOp = 2725;
     public static final int slideRetractedPosition = 296;
-    public static final int pivotHighBarTarget = 900;
-    public static final int pivotLowBarTarget = 750;
-    public static final int slideHighBarPosition = 1650;
-    public static final int slideHighBarScorePosition = 1600;
+    public static final int pivotHighBarTarget = 755;
+    public static final int pivotLowBarTarget = 500;
+    public static final int slideHighBarPosition = 1380;
+    public static final int slideHighBarScorePosition = 1200;
     public static final int pivotHighBarScore = pivotHighBarTarget - 100;
     public static final int slideLowBarPosition = 1400;
     public static final int pivotIntakePosition = 100;

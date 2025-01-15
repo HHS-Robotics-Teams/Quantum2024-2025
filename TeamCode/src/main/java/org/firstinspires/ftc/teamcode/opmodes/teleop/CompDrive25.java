@@ -45,6 +45,7 @@ import static org.firstinspires.ftc.teamcode.opmodes.Constants.slideRetractedPos
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.wristBarPosition;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.wristMiddlePosition;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -52,6 +53,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import org.firstinspires.ftc.teamcode.components.RobotComponents;
 import org.firstinspires.ftc.teamcode.excutil.Input;
 
+@Disabled
 @TeleOp(name = "Competition Drive")
 public class CompDrive25 extends OpMode {
 

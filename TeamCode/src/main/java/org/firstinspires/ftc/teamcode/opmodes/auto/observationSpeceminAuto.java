@@ -9,8 +9,10 @@ import static org.firstinspires.ftc.teamcode.components.RobotComponents.wrist_se
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.closedPosition;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.extendPower;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.openPosition;
+import static org.firstinspires.ftc.teamcode.opmodes.Constants.pivotDownPosition;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.pivotHighBarScore;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.pivotHighBarTarget;
+import static org.firstinspires.ftc.teamcode.opmodes.Constants.pivotLowBarTarget;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.pivotMiddleTarget;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.pivotPower;
 import static org.firstinspires.ftc.teamcode.opmodes.Constants.slideHighBarPosition;
@@ -40,7 +42,6 @@ public class observationSpeceminAuto extends LinearOpMode {
         left_slide_motor.setPower(extendPower);
         right_slide_motor.setPower(extendPower);
         pivot_motor.setPower(pivotPower);
-        intakeouttake_servo.setPosition(closedPosition);
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
@@ -49,31 +50,32 @@ public class observationSpeceminAuto extends LinearOpMode {
 
         TrajectorySequence forwardTrajectory = drive.trajectorySequenceBuilder(startPose)
                 .waitSeconds(10)
-                .addDisplacementMarker(() -> {
-                    pivot_motor.setTargetPosition(pivotHighBarTarget);
-                    telemetry.addLine("huh");
-                    telemetry.addData("pivottarget", pivot_motor.getTargetPosition());
-                    telemetry.update();
-                    wrist_servo.setPosition(wristBarPosition);
-                    intakeouttake_servo.setPosition(closedPosition);
-                })
-                .forward(20)
-                .addDisplacementMarker(5, () -> {
+                .addDisplacementMarker(1,() -> {
                     left_slide_motor.setTargetPosition(slideHighBarPosition);
                     right_slide_motor.setTargetPosition(slideHighBarPosition);
+                    pivot_motor.setTargetPosition(pivotHighBarTarget);
                 })
-                .waitSeconds(.25)
+                .lineToConstantHeading(new Vector2d(20, 8))
                 .addDisplacementMarker(() -> {
-                    pivot_motor.setTargetPosition(pivotHighBarScore);
                     wrist_servo.setPosition(wristMiddlePosition);
                 })
-                .waitSeconds(10)
-                .splineTo(new Vector2d(5, 36), Math.toRadians(0))
+                .waitSeconds(1)
+                .back(1)
                 .addDisplacementMarker(() -> {
+                    pivot_motor.setTargetPosition(pivotLowBarTarget);
+                })
+                .waitSeconds(.5)
+                .back(10)
+                .addDisplacementMarker(Math.sqrt(Math.pow(19.5, 2) + Math.pow((8 + 1e-2) + 8, 2)),() -> {
+                    pivot_motor.setTargetPosition(pivotDownPosition);
                     left_slide_motor.setTargetPosition(slideRetractedPosition);
                     right_slide_motor.setTargetPosition(slideRetractedPosition);
+                    wrist_servo.setPosition(wristMiddlePosition);
+                    intakeouttake_servo.setPosition(openPosition);
                 })
+                .lineToLinearHeading(new Pose2d(5,-40,Math.toRadians(0)))
                 .build();
+
 
         waitForStart();
 
@@ -81,6 +83,8 @@ public class observationSpeceminAuto extends LinearOpMode {
             return;
         }
         intakeouttake_servo.setPosition(closedPosition);
+        pivot_motor.setTargetPosition(pivotHighBarTarget);
+        wrist_servo.setPosition(wristBarPosition);
 
         drive.followTrajectorySequence(forwardTrajectory);
 
