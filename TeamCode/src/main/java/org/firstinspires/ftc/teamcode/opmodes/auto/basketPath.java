@@ -69,34 +69,34 @@ public class basketPath extends LinearOpMode {
         TrajectorySequence forwardTrajectory = drive.trajectorySequenceBuilder(startPose)
                 .addDisplacementMarker(() -> {
                     intakeouttake_servo.setPosition(closedPosition);
-                    pivot_motor.setTargetPosition(pivotHighBarTarget);
+                    pivot_motor.setTargetPosition(950);
                 })
                 .addDisplacementMarker(1e-4,() -> {
                     wrist_servo.setPosition(wristMiddlePosition);
-                    left_slide_motor.setTargetPosition(slideHighBarPosition + 200);
-                    right_slide_motor.setTargetPosition(slideHighBarPosition + 200);
-                    pivot_motor.setTargetPosition(pivotHighBarTarget + 199);
+                    left_slide_motor.setTargetPosition(1100 + 200);
+                    right_slide_motor.setTargetPosition(1100 + 200);
+                    pivot_motor.setTargetPosition(975);
                 })
-                .lineToConstantHeading(new Vector2d(20, -8))
-                .addDisplacementMarker(((Math.sqrt(Math.pow(20, 2) + Math.pow(8, 2))) + 4),() -> {
+                .lineToConstantHeading(new Vector2d(20, -6))
+                .addDisplacementMarker(((Math.sqrt(Math.pow(20, 2) + Math.pow(6, 2))) + .5),() -> {
                     pivot_motor.setPower(pivotPower);
-                    pivot_motor.setTargetPosition(pivotHighBarScore - 25);
+                    pivot_motor.setTargetPosition(850);
                 })
                 .addTemporalMarker(1, () -> {
-                    left_slide_motor.setTargetPosition(slideHighBarPosition);
-                    right_slide_motor.setTargetPosition(slideHighBarPosition);
+                    left_slide_motor.setTargetPosition(1100);
+                    right_slide_motor.setTargetPosition(1100);
                 })
-                .addDisplacementMarker(((Math.sqrt(Math.pow(20, 2) + Math.pow(8, 2))) + 4.1), () -> {
+                .addDisplacementMarker(((Math.sqrt(Math.pow(20, 2) + Math.pow(6.000001, 2))) + 4.1), () -> {
                     intakeouttake_servo.setPosition(openPosition);
                     left_slide_motor.setTargetPosition(350);
                     right_slide_motor.setTargetPosition(350);
                 })
                 .waitSeconds(.25)
                 .back(10)
-                .addDisplacementMarker((Math.sqrt(Math.pow(25, 2) + Math.pow(8, 2)) + 6), () -> {
+                .addDisplacementMarker((Math.sqrt(Math.pow(25, 2) + Math.pow(6.00001, 2)) + 6), () -> {
                     pivot_motor.setPower(pivotPower);
                     wrist_servo.setPosition(wristMiddlePosition);
-                    pivot_motor.setTargetPosition(500);
+                    pivot_motor.setTargetPosition(700);
                     left_slide_motor.setTargetPosition(slideRetractedPosition);
                     right_slide_motor.setTargetPosition(slideRetractedPosition);
                 })
@@ -107,9 +107,9 @@ public class basketPath extends LinearOpMode {
                 .addDisplacementMarker(12,() -> {
                     intakeouttake_servo.setPosition(openPosition);
                     wrist_servo.setPosition(wristMiddlePosition);
-                    pivot_motor.setTargetPosition(400);
-                    left_slide_motor.setTargetPosition(slidePickupSubmersiblePosition + 120);
-                    right_slide_motor.setTargetPosition(slidePickupSubmersiblePosition + 120);
+                    pivot_motor.setTargetPosition(500);
+                    left_slide_motor.setTargetPosition(slidePickupSubmersiblePosition + 200);
+                    right_slide_motor.setTargetPosition(slidePickupSubmersiblePosition + 200);
                 })
                 .addTemporalMarker(2.25, () -> {
                     pivot_motor.setTargetPosition(310);
@@ -152,8 +152,8 @@ public class basketPath extends LinearOpMode {
                 .lineTo(new Vector2d(52, 38))
                 .lineToLinearHeading(new Pose2d(9.5,38,Math.toRadians(0)))
                 .lineTo(new Vector2d(52, 38))
-                .lineTo(new Vector2d(52,43))
-                .lineToLinearHeading(new Pose2d(12, 43, Math.toRadians(0)))
+                .lineTo(new Vector2d(52,45))
+                .lineToLinearHeading(new Pose2d(12, 45, Math.toRadians(0)))
                 .build();
         waitForStart();
 

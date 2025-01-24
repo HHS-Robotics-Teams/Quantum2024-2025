@@ -48,45 +48,78 @@ public class observationSpeceminAuto extends LinearOpMode {
         Pose2d startPose = new Pose2d(0, 0, Math.toRadians(0));
         drive.setPoseEstimate(startPose);
 
+
         TrajectorySequence forwardTrajectory = drive.trajectorySequenceBuilder(startPose)
                 .waitSeconds(10)
-                .addDisplacementMarker(1,() -> {
-                    left_slide_motor.setTargetPosition(slideHighBarPosition);
-                    right_slide_motor.setTargetPosition(slideHighBarPosition);
-                    pivot_motor.setTargetPosition(pivotHighBarTarget);
+                .addTemporalMarker(9.95,() -> {
+                    intakeouttake_servo.setPosition(closedPosition);
+                    pivot_motor.setTargetPosition(950);
+                })
+                .addTemporalMarker(10.15,() -> {
+                    wrist_servo.setPosition(wristMiddlePosition);
+                    left_slide_motor.setTargetPosition(1100 + 200);
+                    right_slide_motor.setTargetPosition(1100 + 200);
+                    pivot_motor.setTargetPosition(1000);
                 })
                 .lineToConstantHeading(new Vector2d(20, 8))
-                .addDisplacementMarker(() -> {
-                    wrist_servo.setPosition(wristMiddlePosition);
+                .addDisplacementMarker(((Math.sqrt(Math.pow(20, 2) + Math.pow(6, 2))) + .5),() -> {
+                    pivot_motor.setPower(pivotPower);
+                    pivot_motor.setTargetPosition(850);
                 })
-                .waitSeconds(1)
-                .back(1)
-                .addDisplacementMarker(() -> {
-                    pivot_motor.setTargetPosition(pivotLowBarTarget);
+                .addTemporalMarker(11, () -> {
+                    left_slide_motor.setTargetPosition(1100);
+                    right_slide_motor.setTargetPosition(1100);
                 })
-                .waitSeconds(.5)
+                .addDisplacementMarker(((Math.sqrt(Math.pow(20, 2) + Math.pow(6.000001, 2))) + 4.1), () -> {
+                    intakeouttake_servo.setPosition(openPosition);
+                    left_slide_motor.setTargetPosition(350);
+                    right_slide_motor.setTargetPosition(350);
+                })
+                .waitSeconds(.25)
+                .addDisplacementMarker(() -> {
+                    intakeouttake_servo.setPosition(wristBarPosition);
+                })
                 .back(10)
-                .addDisplacementMarker(Math.sqrt(Math.pow(19.5, 2) + Math.pow((8 + 1e-2) + 8, 2)),() -> {
-                    pivot_motor.setTargetPosition(pivotDownPosition);
+                .addDisplacementMarker((Math.sqrt(Math.pow(25, 2) + Math.pow(6.00001, 2)) + 6), () -> {
+                    pivot_motor.setPower(pivotPower);
+                    wrist_servo.setPosition(wristMiddlePosition);
+                    pivot_motor.setTargetPosition(700);
                     left_slide_motor.setTargetPosition(slideRetractedPosition);
                     right_slide_motor.setTargetPosition(slideRetractedPosition);
-                    wrist_servo.setPosition(wristMiddlePosition);
-                    intakeouttake_servo.setPosition(openPosition);
                 })
-                .lineToLinearHeading(new Pose2d(5,-40,Math.toRadians(0)))
                 .build();
 
+        TrajectorySequence secondTrajectory = drive.trajectorySequenceBuilder(forwardTrajectory.end())
+                .lineTo(new Vector2d(5, -20))
+                .lineTo(new Vector2d(50, -26))
+                .lineTo(new Vector2d(50, -31))
+                .lineTo(new Vector2d(5, -31))
+                .lineTo(new Vector2d(50, -31))
+                .lineTo(new Vector2d(50, -38))
+                .lineTo(new Vector2d(5, -38))
+                .lineTo(new Vector2d(50,-38))
+                .lineTo(new Vector2d(50,-46))
+                .lineTo(new Vector2d(5,-46))
+                .addTemporalMarker(2, () -> {
+                    wrist_servo.setPosition(.55);
+                    pivot_motor.setTargetPosition(0);
+                    left_slide_motor.setTargetPosition(0);
+                    right_slide_motor.setTargetPosition(0);
+                })
+
+                .build();
 
         waitForStart();
 
         if (isStopRequested()) {
             return;
         }
+
         intakeouttake_servo.setPosition(closedPosition);
-        pivot_motor.setTargetPosition(pivotHighBarTarget);
         wrist_servo.setPosition(wristBarPosition);
 
         drive.followTrajectorySequence(forwardTrajectory);
+        drive.followTrajectorySequence(secondTrajectory);
 
         telemetry.addData("Status", "Autonomous Complete");
         telemetry.update();
