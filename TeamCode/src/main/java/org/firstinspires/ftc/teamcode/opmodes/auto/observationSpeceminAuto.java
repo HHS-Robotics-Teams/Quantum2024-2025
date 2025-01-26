@@ -67,8 +67,8 @@ public class observationSpeceminAuto extends LinearOpMode {
                     pivot_motor.setTargetPosition(850);
                 })
                 .addTemporalMarker(11, () -> {
-                    left_slide_motor.setTargetPosition(1100);
-                    right_slide_motor.setTargetPosition(1100);
+                    left_slide_motor.setTargetPosition(1000);
+                    right_slide_motor.setTargetPosition(1000);
                 })
                 .addDisplacementMarker(((Math.sqrt(Math.pow(20, 2) + Math.pow(6.000001, 2))) + 4.1), () -> {
                     intakeouttake_servo.setPosition(openPosition);

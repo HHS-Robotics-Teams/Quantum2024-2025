@@ -433,7 +433,6 @@ public class CompDrive25 extends OpMode {
 
         switch (currentArmStep){
             case(0):
-                intakeouttake_servo.setPosition(openPosition);
                 pivot_motor.setTargetPosition(pivotMiddleTarget);
                 if(isDone(pivot_motor, pivotMargin)){
                     currentArmStep++;

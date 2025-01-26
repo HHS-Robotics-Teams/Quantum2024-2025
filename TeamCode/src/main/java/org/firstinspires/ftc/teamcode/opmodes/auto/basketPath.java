@@ -83,8 +83,8 @@ public class basketPath extends LinearOpMode {
                     pivot_motor.setTargetPosition(850);
                 })
                 .addTemporalMarker(1, () -> {
-                    left_slide_motor.setTargetPosition(1100);
-                    right_slide_motor.setTargetPosition(1100);
+                    left_slide_motor.setTargetPosition(1000);
+                    right_slide_motor.setTargetPosition(1000);
                 })
                 .addDisplacementMarker(((Math.sqrt(Math.pow(20, 2) + Math.pow(6.000001, 2))) + 4.1), () -> {
                     intakeouttake_servo.setPosition(openPosition);
@@ -108,8 +108,8 @@ public class basketPath extends LinearOpMode {
                     intakeouttake_servo.setPosition(openPosition);
                     wrist_servo.setPosition(wristMiddlePosition);
                     pivot_motor.setTargetPosition(500);
-                    left_slide_motor.setTargetPosition(slidePickupSubmersiblePosition + 200);
-                    right_slide_motor.setTargetPosition(slidePickupSubmersiblePosition + 200);
+                    left_slide_motor.setTargetPosition(slidePickupSubmersiblePosition + 150);
+                    right_slide_motor.setTargetPosition(slidePickupSubmersiblePosition + 150);
                 })
                 .addTemporalMarker(2.25, () -> {
                     pivot_motor.setTargetPosition(310);
@@ -119,8 +119,8 @@ public class basketPath extends LinearOpMode {
                 })
                 .addTemporalMarker(3.2, () -> {
                     pivot_motor.setTargetPosition(pivotMiddleTarget - 15);
-                    left_slide_motor.setTargetPosition(slideRetractedPosition + 150);
-                    right_slide_motor.setTargetPosition(slideRetractedPosition + 150);
+                    left_slide_motor.setTargetPosition(slideRetractedPosition + 100);
+                    right_slide_motor.setTargetPosition(slideRetractedPosition + 100);
                 })
                 .waitSeconds(3.5)
                 .lineToLinearHeading(new Pose2d(9,38, Math.toRadians(142.5)))
@@ -148,7 +148,7 @@ public class basketPath extends LinearOpMode {
                     right_slide_motor.setTargetPosition(0);
                 })
                 .waitSeconds(2.25)
-                .splineToLinearHeading(new Pose2d(52,20),Math.toRadians(0))
+                .lineToLinearHeading(new Pose2d(52,20,Math.toRadians(0)))
                 .lineTo(new Vector2d(52, 38))
                 .lineToLinearHeading(new Pose2d(9.5,38,Math.toRadians(0)))
                 .lineTo(new Vector2d(52, 38))
